@@ -1,4 +1,5 @@
 //import 'package:admin_dashboard/router/admin_handlers.dart';
+import 'package:admin_dashboard/providers/init_provider.dart';
 import 'package:admin_dashboard/providers/login_form_provider.dart';
 import 'package:flutter/material.dart';
 
@@ -54,6 +55,7 @@ class AppState extends StatelessWidget {
         ChangeNotifierProvider(create: (_)=> SideMenuProvider(),lazy: false,),
         ChangeNotifierProvider(create: (_) => UsersProvider()),
         ChangeNotifierProvider(create: (_) => LoginFormProvider(),),
+        ChangeNotifierProvider(create: (_) =>MiInicializador(),),
       ],
       child: const MyApp(),
     );

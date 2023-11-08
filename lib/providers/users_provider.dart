@@ -21,6 +21,7 @@ class UsersProvider extends ChangeNotifier {
   List<RolesPermisos> rolesPermisos = [];
   List<Permisos> permisos = [];
   List<Permisos> permisosRol = [];
+  List<Parametrizacion> parametrizacion = [];
   Usuario? usuario;
   Rol? rol;
 
@@ -281,7 +282,6 @@ class UsersProvider extends ChangeNotifier {
       if (parsedResponse.containsKey('data')) {
         final List<dynamic> data = parsedResponse['data']['permissions'];
 
-
         final List<Permisos> permisos =
             data.map((item) => Permisos.fromMap(item)).toList();
 
@@ -372,6 +372,177 @@ class UsersProvider extends ChangeNotifier {
       }
     }
 
+    isLoading = false;
+    notifyListeners();
+  }
+
+  //-------------------------------------------Parametrizacion----------------------------------------//
+
+  Future<void> deleteParametrizacion(
+    int id,
+  ) async {
+    final url = 'http://localhost:4000/v1/planning-sowing/$id';
+    final token = LocalStorage.prefs.getString('token') ?? '';
+
+    final headers = {
+      'Authorization': 'Bearer $token',
+      'Content-Type': 'application/json',
+    };
+
+    final response = await http.delete(Uri.parse(url), headers: headers);
+
+    if (response.statusCode == 200) {
+      // La solicitud fue exitosa
+    }
+
+    getSiembra();
+    isLoading = false;
+    notifyListeners();
+  }
+
+  getSiembra() async {
+    parametrizacion.clear();
+    final url = 'http://localhost:4000/v1/planning-sowing';
+    final token = LocalStorage.prefs.getString('token') ??
+        ''; // Replace with your saved token
+
+    final headers = {
+      'Authorization': 'Bearer $token',
+      'Content-Type': 'application/json',
+    };
+
+    final response = await http.get(Uri.parse(url), headers: headers);
+
+    if (response.statusCode == 200) {
+      final responseBody = response.body;
+      final parsedResponse = json.decode(responseBody);
+      if (parsedResponse.containsKey('data')) {
+        final List<dynamic> data = parsedResponse['data'];
+
+        final List<Parametrizacion> parametrizaciones =
+            data.map((item) => Parametrizacion.fromMap(item)).toList();
+
+        // Utiliza la lista de usuarios según tus necesidades
+        parametrizaciones.forEach((parametrizacion) {
+          this.parametrizacion.add(parametrizacion);
+          print('Nombre: ${parametrizacion.id}');
+          print('Correo: ${parametrizacion.climaticCondition}');
+        });
+      }
+    }
+
+    isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> putUpdateParametrizacion(
+    String climaticCondition,
+    String nameSeed,
+    String bananaVariety,
+    double fertilizerQuantity,
+    double pesticideQuantity,
+    String fechaFumigacion,
+    String riego,
+    String fechainicio,
+    String fechafin,
+    int selectedSowing,
+    double peso,
+    int numerB,
+    int rechazadosB,
+    int numLote,
+    int id,
+  ) async {
+    final url = 'http://localhost:4000/v1/planning-sowing/$id';
+    final token = LocalStorage.prefs.getString('token') ?? '';
+
+    final data = {
+      "climaticCondition": climaticCondition,
+      "seedName": nameSeed,
+      "bananaVariety": bananaVariety,
+      "fertilizerQuantityKG": fertilizerQuantity,
+      "pesticideQuantityKG": pesticideQuantity,
+      "fumigationDate": fechaFumigacion,
+      "irrigation": riego,
+      "sowingDate": fechainicio,
+      "sowingDateEnd": fechafin,
+      "estimatedSowingTime": selectedSowing,
+      "rejectedBunches": rechazadosB,
+      "numberOfBunches": numerB,
+      "averageBunchWeight": peso,
+      "batchNumber": numLote
+    };
+
+    final headers = {
+      'Authorization': 'Bearer $token',
+      'Content-Type': 'application/json',
+    };
+
+    final body = json.encode(data);
+
+    final response =
+        await http.put(Uri.parse(url), headers: headers, body: body);
+
+    if (response.statusCode == 200) {
+      // La solicitud fue exitosa
+    }
+
+    getSiembra();
+    isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> postCreateParametrizacion(
+    String climaticCondition,
+    String nameSeed,
+    String bananaVariety,
+    double fertilizerQuantity,
+    double pesticideQuantity,
+    String fechaFumigacion,
+    String riego,
+    String fechainicio,
+    String fechafin,
+    int selectedSowing,
+    double peso,
+    int numerB,
+    int rechazadosB,
+    int numLote,
+  ) async {
+    final url = 'http://localhost:4000/v1/planning-sowing';
+    final token = LocalStorage.prefs.getString('token') ?? '';
+
+    final data = {
+      "climaticCondition": climaticCondition,
+      "seedName": nameSeed,
+      "bananaVariety": bananaVariety,
+      "fertilizerQuantityKG": fertilizerQuantity,
+      "pesticideQuantityKG": pesticideQuantity,
+      "fumigationDate": fechaFumigacion,
+      "irrigation": riego,
+      "sowingDate": fechainicio,
+      "sowingDateEnd": fechafin,
+      "estimatedSowingTime": selectedSowing,
+      "rejectedBunches": rechazadosB,
+      "numberOfBunches": numerB,
+      "averageBunchWeight": peso,
+      "batchNumber": numLote
+    };
+
+    final headers = {
+      'Authorization': 'Bearer $token',
+      'Content-Type': 'application/json',
+    };
+
+    final body = json.encode(data);
+
+    final response =
+        await http.post(Uri.parse(url), headers: headers, body: body);
+    print(response);
+
+    if (response.statusCode == 200) {
+      // La solicitud fue exitosa
+    }
+
+    getSiembra();
     isLoading = false;
     notifyListeners();
   }

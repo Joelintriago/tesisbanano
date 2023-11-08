@@ -68,95 +68,97 @@ class UsersDataSource extends DataTableSource {
                             }
                           }
 
-                          return AlertDialog(
-                            title: const Text('Editar usuario'),
-                            content: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                TextField(
-                                  controller: nameController,
-                                  decoration:
-                                      InputDecoration(labelText: 'Nombre'),
-                                ),
-                                TextField(
-                                  controller: lastNameController,
-                                  decoration:
-                                      InputDecoration(labelText: 'Apellido'),
-                                ),
-                                DropdownButtonFormField<String>(
-                                  value: selectedStatus,
-                                  decoration:
-                                      InputDecoration(labelText: 'Estado'),
-                                  items: ['activo', 'inactivo']
-                                      .map<DropdownMenuItem<String>>(
-                                        (String value) =>
-                                            DropdownMenuItem<String>(
-                                          value: value,
-                                          child: Text(value),
-                                        ),
-                                      )
-                                      .toList(),
-                                  onChanged: (String? value) {
-                                    selectedStatus = value;
+                          return SingleChildScrollView(
+                            child: AlertDialog(
+                              title: const Text('Editar usuario'),
+                              content: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  TextField(
+                                    controller: nameController,
+                                    decoration:
+                                        InputDecoration(labelText: 'Nombre'),
+                                  ),
+                                  TextField(
+                                    controller: lastNameController,
+                                    decoration:
+                                        InputDecoration(labelText: 'Apellido'),
+                                  ),
+                                  DropdownButtonFormField<String>(
+                                    value: selectedStatus,
+                                    decoration:
+                                        InputDecoration(labelText: 'Estado'),
+                                    items: ['activo', 'inactivo']
+                                        .map<DropdownMenuItem<String>>(
+                                          (String value) =>
+                                              DropdownMenuItem<String>(
+                                            value: value,
+                                            child: Text(value),
+                                          ),
+                                        )
+                                        .toList(),
+                                    onChanged: (String? value) {
+                                      selectedStatus = value;
+                                    },
+                                  ),
+                                  DropdownButtonFormField<Roles>(
+                                    value: rol,
+                                    decoration: InputDecoration(labelText: 'Rol'),
+                                    items: usersProvider.roles
+                                        .map<DropdownMenuItem<Roles>>(
+                                          (Roles rol) => DropdownMenuItem<Roles>(
+                                            value: rol,
+                                            child: Text(rol.roleName),
+                                          ),
+                                        )
+                                        .toList(),
+                                    onChanged: (Roles? value) {
+                                      selectedRoleId = value?.id;
+                                    },
+                                  ),
+                                ],
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
                                   },
+                                  child: const Text('Cancelar'),
                                 ),
-                                DropdownButtonFormField<Roles>(
-                                  value: rol,
-                                  decoration: InputDecoration(labelText: 'Rol'),
-                                  items: usersProvider.roles
-                                      .map<DropdownMenuItem<Roles>>(
-                                        (Roles rol) => DropdownMenuItem<Roles>(
-                                          value: rol,
-                                          child: Text(rol.roleName),
-                                        ),
-                                      )
-                                      .toList(),
-                                  onChanged: (Roles? value) {
-                                    selectedRoleId = value?.id;
+                                ElevatedButton(
+                                  onPressed: () async {
+                                    // Lógica para guardar el usuario utilizando los datos ingresados
+                                    final String name = nameController.text;
+                                    final String lastName =
+                                        lastNameController.text;
+                            
+                                    final String email = emailController.text;
+                            
+                                    // Validar que todos los campos estén completos
+                                    if (email.isEmpty ||
+                                        name.isEmpty ||
+                                        lastName.isEmpty ||
+                                        selectedStatus == null ||
+                                        selectedRoleId == null) {
+                                      return;
+                                    }
+                                    print(selectedRoleId);
+                                    print(selectedStatus);
+                                    await usersProvider.putUpdateUser(
+                                        name,
+                                        lastName,
+                                        selectedStatus!,
+                                        email,
+                                        selectedRoleId!,
+                                        user.id);
+                                    NotificationsService.showSnackBar(
+                                        'Usuario Actualizado');
+                                    Navigator.pop(context);
                                   },
+                                  child: Text('Guardar'),
                                 ),
                               ],
                             ),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                child: const Text('Cancelar'),
-                              ),
-                              ElevatedButton(
-                                onPressed: () async {
-                                  // Lógica para guardar el usuario utilizando los datos ingresados
-                                  final String name = nameController.text;
-                                  final String lastName =
-                                      lastNameController.text;
-
-                                  final String email = emailController.text;
-
-                                  // Validar que todos los campos estén completos
-                                  if (email.isEmpty ||
-                                      name.isEmpty ||
-                                      lastName.isEmpty ||
-                                      selectedStatus == null ||
-                                      selectedRoleId == null) {
-                                    return;
-                                  }
-                                  print(selectedRoleId);
-                                  print(selectedStatus);
-                                  await usersProvider.putUpdateUser(
-                                      name,
-                                      lastName,
-                                      selectedStatus!,
-                                      email,
-                                      selectedRoleId!,
-                                      user.id);
-                                  NotificationsService.showSnackBar(
-                                      'Usuario Actualizado');
-                                  Navigator.pop(context);
-                                },
-                                child: Text('Guardar'),
-                              ),
-                            ],
                           );
                         },
                       );
@@ -206,4 +208,5 @@ class UsersDataSource extends DataTableSource {
 
   @override
   int get selectedRowCount => 0;
+  
 }

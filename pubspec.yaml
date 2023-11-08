@@ -42,6 +42,7 @@ dependencies:
   hover_card: ^0.0.1
   http: ^1.1.0
   provider: ^6.0.5
+  intl: 0.18.1
   responsive_grid: ^2.4.4
   riverpod: ^2.4.0
   shared_preferences: ^2.2.1

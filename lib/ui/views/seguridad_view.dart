@@ -7,6 +7,7 @@ import 'package:admin_dashboard/datatables/permisso_datasource.dart';
 import 'package:admin_dashboard/models/roles.dart';
 
 import 'package:admin_dashboard/providers/users_provider.dart';
+import 'package:admin_dashboard/providers/init_provider.dart';
 
 import 'package:admin_dashboard/services/notification_service.dart';
 
@@ -21,17 +22,25 @@ class UsersView extends StatefulWidget {
 }
 
 class _UsersViewState extends State<UsersView> {
+
   int c = 0;
   bool per = false;
   @override
-  @override
   void didChangeDependencies() {
-    if (c == 0) {
-      super.didChangeDependencies();
+    super.didChangeDependencies();
+    
+    final miVariable = Provider.of<MiInicializador>(context);
+    // Realizar las operaciones dependientes de InheritedWidget
+    if (miVariable.c == 0) {
+      
       Provider.of<UsersProvider>(context).getRolesPermisos();
-      Provider.of<UsersProvider>(context).getPermisos();
-
-      c++;
+      print('imprimiendo $miVariable.c');
+      miVariable.incrementC();
+      print('imprimiendo $miVariable.c');
+    }
+    if(c == 0){
+            Provider.of<UsersProvider>(context).getPermisos();
+            c++;
     }
   }
 
@@ -48,7 +57,6 @@ class _UsersViewState extends State<UsersView> {
     bool _showPassword = false;
 
     int? selectedRoleId;
-   
 
     return DefaultTabController(
       length: 2, // Número de pestañas (Usuarios y Permisos)
@@ -337,50 +345,48 @@ class _UsersViewState extends State<UsersView> {
                                   InputDecoration(labelText: 'Escoja un rol'),
                               items: rolesP
                                   .map<DropdownMenuItem<RolesPermisos>>(
-                                    (RolesPermisos rol) => DropdownMenuItem<RolesPermisos>(
+                                    (RolesPermisos rol) =>
+                                        DropdownMenuItem<RolesPermisos>(
                                       value: rol,
                                       child: Text(rol.roleName),
                                     ),
                                   )
                                   .toList(),
                               onChanged: (RolesPermisos? value) async {
-                                
                                 selectedRoleId = value?.id;
                                 await Provider.of<UsersProvider>(context,
                                         listen: false)
                                     .getPermisosRol(selectedRoleId!);
                                 per = true;
-                                setState(() {
-                                   
-                                });
+                                setState(() {});
                               },
                             ),
                           ),
                         ),
                       ),
                       if (per == true)
-                          Padding(
-                            padding: const EdgeInsets.all(15.0),
-                            child: PaginatedDataTable(
-                              sortAscending: usersProvider.ascending,
-                              sortColumnIndex: usersProvider.sortColumnIndex,
-                              header: const Center(
-                                  child: Text(
-                                "Permisos",
-                                style: TextStyle(
-                                    fontSize: 25, fontWeight: FontWeight.bold),
-                              )),
-                              headingRowHeight: 100,
-                              columns: const[
-                                DataColumn(label: Text('Id')),
-                                DataColumn(label: Text('Descripción')),
-                                DataColumn(label: Text('Permiso')),
-                                DataColumn(label: Text('Dar/Quitar')),
-                              ],
-                              source: permisosDataSource,
-                              onPageChanged: (page) {},
-                            ),
-                          )
+                        Padding(
+                          padding: const EdgeInsets.all(15.0),
+                          child: PaginatedDataTable(
+                            sortAscending: usersProvider.ascending,
+                            sortColumnIndex: usersProvider.sortColumnIndex,
+                            header: const Center(
+                                child: Text(
+                              "Permisos",
+                              style: TextStyle(
+                                  fontSize: 25, fontWeight: FontWeight.bold),
+                            )),
+                            headingRowHeight: 100,
+                            columns: const [
+                              DataColumn(label: Text('Id')),
+                              DataColumn(label: Text('Descripción')),
+                              DataColumn(label: Text('Permiso')),
+                              DataColumn(label: Text('Dar/Quitar')),
+                            ],
+                            source: permisosDataSource,
+                            onPageChanged: (page) {},
+                          ),
+                        )
                     ],
                   ),
                 ),
