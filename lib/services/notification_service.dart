@@ -14,7 +14,7 @@ class NotificationsService {
       backgroundColor: Colors.red.withOpacity(0.9),
       content: Text(
         message,
-        style: const TextStyle(color: Colors.white30, fontSize: 20),
+        style: const TextStyle(color: Colors.black, fontSize: 20),
       ),
     );
 
@@ -26,10 +26,10 @@ class NotificationsService {
     messengerKey.currentState!.removeCurrentSnackBar();
 
     final snackbar = SnackBar(
-      backgroundColor: Colors.greenAccent.withOpacity(0.9),
+      backgroundColor: Colors.green.withOpacity(0.9),
       content: Text(
         message,
-        style: const TextStyle(color: Colors.white30, fontSize: 20),
+        style: const TextStyle(color: Colors.black, fontSize: 20),
       ),
     );
 

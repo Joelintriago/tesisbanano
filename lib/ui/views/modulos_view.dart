@@ -108,20 +108,24 @@ class _ModulosView2State extends State<ModulosView2> {
               md: 12,
               child: Container(
                 padding: const EdgeInsets.all(8),
-                child: const Row(
+                child:  Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     Flexible(
                         child: ModulosCard(
                       imagePath: 'assets/modul_operativo.png',
                       text: 'MÓDULO OPERATIVO',
-                      onPressed: null,
+                      onPressed: (){
+                        NavigationService.replaceTo(Flurorouter.operativoRoute);
+                      },
                     )),
                     Flexible(
                         child: ModulosCard(
                       imagePath: 'assets/modul_reporte.png',
                       text: 'MÓDULO DE REPORTES',
-                      onPressed: null,
+                      onPressed: (){
+                        NavigationService.replaceTo(Flurorouter.reporteRoute);
+                      },
                     )),
                   ],
                 ),

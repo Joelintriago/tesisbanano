@@ -1,3 +1,4 @@
+import 'package:admin_dashboard/ui/buttons/custom_icon_button.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -103,332 +104,437 @@ class _ParametrizacionViewState extends State<ParametrizacionView> {
                       physics: const ClampingScrollPhysics(),
                       children: [
                         PaginatedDataTable(
-                          actions: [
-                  IconButton(
-                    icon: Icon(Icons.add, color: Colors.blue),
-                    onPressed: () async {
-                      final usersProvider =
-                          Provider.of<UsersProvider>(context, listen: false);
-                      
+                            actions: [
+                              CustomIconButton(
+                                  text: 'Agregar',
+                                  icon: Icons.add_outlined,
+                                  onPressed: () async {
+                                    final usersProvider =
+                                        Provider.of<UsersProvider>(context,
+                                            listen: false);
 
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext dialogContext) {
-                          return StatefulBuilder(
-                            builder:
-                                (BuildContext context, StateSetter setState) {
-                              return AlertDialog(
-                                title: Text('Agregar parametrización'),
-                                content: SingleChildScrollView(
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      TextField(
-                                        controller: condicionController,
-                                        decoration: InputDecoration(
-                                            labelText: 'Condición climática'),
-                                      ),
-                                      DropdownButtonFormField<String>(
-                                        value: selectedvariedadOption,
-                                        decoration:
-                                            InputDecoration(labelText: 'Variedad del banano'),
-                                        items: variedadOptions.map((option) {
-                                          return DropdownMenuItem<String>(
-                                            value: option,
-                                            child: Text(option),
-                                          );
-                                        }).toList(),
-                                        onChanged: (newValue) {
-                                          setState(() {
-                                            selectedvariedadOption =
-                                                newValue!;
-                                          });
-                                        },
-                                      ),
-                                      TextField(
-                                        controller: cantidadSemillasController,
-                                        decoration: InputDecoration(
-                                            labelText: 'Cantidad de semilla/plantas'),
-                                      ),
-                                      TextField(
-                                        controller:
-                                            cantidadFertilizanteController,
-                                        decoration: InputDecoration(
-                                            labelText:
-                                                'Cantidad de fertilizante'),
-                                        keyboardType: TextInputType.number,
-                                      ),
-                                      TextField(
-                                        controller: cantidadpesticidaController,
-                                        decoration: InputDecoration(
-                                            labelText: 'Cantidad de pesticida'),
-                                        keyboardType: TextInputType.number,
-                                      ),
-                                      TextField(
-                                        controller: fumgationDateController,
-                                        decoration: InputDecoration(
-                                            labelText: 'Fecha fumigación'),
-                                        readOnly: true,
-                                        onTap: () {
-                                          showDatePicker(
-                                            context: context,
-                                            initialDate: DateTime.now(),
-                                            firstDate: DateTime(1900),
-                                            lastDate: DateTime(2040),
-                                          ).then((selectedDate) {
-                                            if (selectedDate != null) {
-                                              setState(() {
-                                                fumgationDateController.text =
-                                                    DateFormat.yMd()
-                                                        .format(selectedDate);
-                                              });
-                                            }
-                                          });
-                                        },
-                                      ),
-                                      DropdownButtonFormField<String>(
-                                        value: selectedIrrigationOption,
-                                        decoration:
-                                            InputDecoration(labelText: 'Riego'),
-                                        items: irrigationOptions.map((option) {
-                                          return DropdownMenuItem<String>(
-                                            value: option,
-                                            child: Text(option),
-                                          );
-                                        }).toList(),
-                                        onChanged: (newValue) {
-                                          setState(() {
-                                            selectedIrrigationOption =
-                                                newValue!;
-                                          });
-                                        },
-                                      ),
-                                      TextField(
-                                        controller: sowingDateController,
-                                        decoration: InputDecoration(
-                                            labelText: 'Fecha de inicio'),
-                                        readOnly: true,
-                                        onTap: () {
-                                          showDatePicker(
-                                            context: context,
-                                            initialDate: DateTime.now(),
-                                            firstDate: DateTime(1900),
-                                            lastDate: DateTime.now(),
-                                          ).then((selectedDate) {
-                                            if (selectedDate != null) {
-                                              setState(() {
-                                                sowingDateController.text =
-                                                    DateFormat.yMd()
-                                                        .format(selectedDate);
-                                              });
-                                            }
-                                          });
-                                        },
-                                      ),
-                                      TextField(
-                                        controller: sowingDateEndController,
-                                        decoration: InputDecoration(
-                                            labelText: 'Fecha de fin'),
-                                        readOnly: true,
-                                        onTap: () {
-                                          showDatePicker(
-                                            context: context,
-                                            initialDate: DateTime.now(),
-                                            firstDate: DateTime(2000),
-                                            lastDate: DateTime(2030),
-                                          ).then((selectedDate) {
-                                            if (selectedDate != null) {
-                                              setState(() {
-                                                sowingDateEndController.text =
-                                                    DateFormat.yMd()
-                                                        .format(selectedDate);
-                                              });
-                                            }
-                                          });
-                                        },
-                                      ),
-                                      DropdownButtonFormField<String>(
-                                        value: selectedSowingOption,
-                                        decoration: InputDecoration(
-                                            labelText: 'Tiempo estimado'),
-                                        items: sowingOptions.map((option) {
-                                          return DropdownMenuItem<String>(
-                                            value: option,
-                                            child: Text(option),
-                                          );
-                                        }).toList(),
-                                        onChanged: (newValue) {
-                                          setState(() {
-                                            selectedSowingOption = newValue!;
-                                          });
-                                        },
-                                      ),
-                                      TextField(
-                                        controller: numberOfBunchesController,
-                                        decoration: InputDecoration(
-                                            labelText: 'Número de racimos'),
-                                        keyboardType: TextInputType.number,
-                                      ),
-                                      TextField(
-                                        controller: rejectedBunchesController,
-                                        decoration: InputDecoration(
-                                            labelText:
-                                                'Número de racimos rechazados'),
-                                        keyboardType: TextInputType.number,
-                                      ),
-                                      TextField(
-                                        controller:
-                                            averageBunchWeightController,
-                                        decoration: InputDecoration(
-                                            labelText: 'Peso estimado'),
-                                        keyboardType: TextInputType.number,
-                                      ),
-                                      DropdownButtonFormField<String>(
-                                        value: selectedBatchOption,
-                                        decoration: InputDecoration(
-                                            labelText: 'Número de lote'),
-                                        items: batchOptions.map((option) {
-                                          return DropdownMenuItem<String>(
-                                            value: option,
-                                            child: Text("Lote #" + option),
-                                          );
-                                        }).toList(),
-                                        onChanged: (newValue) {
-                                          setState(() {
-                                            selectedBatchOption = newValue!;
-                                          });
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    },
-                                    child: Text('Cancelar'),
-                                  ),
-                                  ElevatedButton(
-                                    onPressed: () async {
-                                      // Validar cantidad y precio
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext dialogContext) {
+                                        return StatefulBuilder(
+                                          builder: (BuildContext context,
+                                              StateSetter setState) {
+                                            return AlertDialog(
+                                              title: const Text(
+                                                  'Agregar parametrización'),
+                                              content: SingleChildScrollView(
+                                                child: Column(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: [
+                                                    TextField(
+                                                      controller:
+                                                          condicionController,
+                                                      decoration:
+                                                          const InputDecoration(
+                                                              labelText:
+                                                                  'Condición climática'),
+                                                    ),
+                                                    DropdownButtonFormField<
+                                                        String>(
+                                                      value:
+                                                          selectedvariedadOption,
+                                                      decoration: InputDecoration(
+                                                          labelText:
+                                                              'Variedad del banano'),
+                                                      items: variedadOptions
+                                                          .map((option) {
+                                                        return DropdownMenuItem<
+                                                            String>(
+                                                          value: option,
+                                                          child: Text(option),
+                                                        );
+                                                      }).toList(),
+                                                      onChanged: (newValue) {
+                                                        setState(() {
+                                                          selectedvariedadOption =
+                                                              newValue!;
+                                                        });
+                                                      },
+                                                    ),
+                                                    TextField(
+                                                      controller:
+                                                          cantidadSemillasController,
+                                                      decoration:
+                                                          const InputDecoration(
+                                                              labelText:
+                                                                  'Cantidad de semilla/plantas'),
+                                                    ),
+                                                    TextField(
+                                                      controller:
+                                                          cantidadFertilizanteController,
+                                                      decoration:
+                                                          const InputDecoration(
+                                                              labelText:
+                                                                  'Cantidad de fertilizante'),
+                                                      keyboardType:
+                                                          TextInputType.number,
+                                                    ),
+                                                    TextField(
+                                                      controller:
+                                                          cantidadpesticidaController,
+                                                      decoration:
+                                                          const InputDecoration(
+                                                              labelText:
+                                                                  'Cantidad de pesticida'),
+                                                      keyboardType:
+                                                          TextInputType.number,
+                                                    ),
+                                                    TextField(
+                                                      controller:
+                                                          fumgationDateController,
+                                                      decoration:
+                                                          const InputDecoration(
+                                                              labelText:
+                                                                  'Fecha fumigación'),
+                                                      readOnly: true,
+                                                      onTap: () {
+                                                        showDatePicker(
+                                                          context: context,
+                                                          initialDate:
+                                                              DateTime.now(),
+                                                          firstDate:
+                                                              DateTime(1900),
+                                                          lastDate:
+                                                              DateTime(2040),
+                                                        ).then((selectedDate) {
+                                                          if (selectedDate !=
+                                                              null) {
+                                                            setState(() {
+                                                              fumgationDateController
+                                                                  .text = DateFormat
+                                                                      .yMd()
+                                                                  .format(
+                                                                      selectedDate);
+                                                            });
+                                                          }
+                                                        });
+                                                      },
+                                                    ),
+                                                    DropdownButtonFormField<
+                                                        String>(
+                                                      value:
+                                                          selectedIrrigationOption,
+                                                      decoration:
+                                                          const InputDecoration(
+                                                              labelText:
+                                                                  'Riego'),
+                                                      items: irrigationOptions
+                                                          .map((option) {
+                                                        return DropdownMenuItem<
+                                                            String>(
+                                                          value: option,
+                                                          child: Text(option),
+                                                        );
+                                                      }).toList(),
+                                                      onChanged: (newValue) {
+                                                        setState(() {
+                                                          selectedIrrigationOption =
+                                                              newValue!;
+                                                        });
+                                                      },
+                                                    ),
+                                                    TextField(
+                                                      controller:
+                                                          sowingDateController,
+                                                      decoration:
+                                                          const InputDecoration(
+                                                              labelText:
+                                                                  'Fecha de inicio'),
+                                                      readOnly: true,
+                                                      onTap: () {
+                                                        showDatePicker(
+                                                          context: context,
+                                                          initialDate:
+                                                              DateTime.now(),
+                                                          firstDate:
+                                                              DateTime(1900),
+                                                          lastDate:
+                                                              DateTime.now(),
+                                                        ).then((selectedDate) {
+                                                          if (selectedDate !=
+                                                              null) {
+                                                            setState(() {
+                                                              sowingDateController
+                                                                  .text = DateFormat
+                                                                      .yMd()
+                                                                  .format(
+                                                                      selectedDate);
+                                                            });
+                                                          }
+                                                        });
+                                                      },
+                                                    ),
+                                                    TextField(
+                                                      controller:
+                                                          sowingDateEndController,
+                                                      decoration:
+                                                          const InputDecoration(
+                                                              labelText:
+                                                                  'Fecha de fin'),
+                                                      readOnly: true,
+                                                      onTap: () {
+                                                        showDatePicker(
+                                                          context: context,
+                                                          initialDate:
+                                                              DateTime.now(),
+                                                          firstDate:
+                                                              DateTime(2000),
+                                                          lastDate:
+                                                              DateTime(2030),
+                                                        ).then((selectedDate) {
+                                                          if (selectedDate !=
+                                                              null) {
+                                                            setState(() {
+                                                              sowingDateEndController
+                                                                  .text = DateFormat
+                                                                      .yMd()
+                                                                  .format(
+                                                                      selectedDate);
+                                                            });
+                                                          }
+                                                        });
+                                                      },
+                                                    ),
+                                                    DropdownButtonFormField<
+                                                        String>(
+                                                      value:
+                                                          selectedSowingOption,
+                                                      decoration: InputDecoration(
+                                                          labelText:
+                                                              'Tiempo estimado'),
+                                                      items: sowingOptions
+                                                          .map((option) {
+                                                        return DropdownMenuItem<
+                                                            String>(
+                                                          value: option,
+                                                          child: Text(option),
+                                                        );
+                                                      }).toList(),
+                                                      onChanged: (newValue) {
+                                                        setState(() {
+                                                          selectedSowingOption =
+                                                              newValue!;
+                                                        });
+                                                      },
+                                                    ),
+                                                    TextField(
+                                                      controller:
+                                                          numberOfBunchesController,
+                                                      decoration: InputDecoration(
+                                                          labelText:
+                                                              'Número de racimos'),
+                                                      keyboardType:
+                                                          TextInputType.number,
+                                                    ),
+                                                    TextField(
+                                                      controller:
+                                                          rejectedBunchesController,
+                                                      decoration: InputDecoration(
+                                                          labelText:
+                                                              'Número de racimos rechazados'),
+                                                      keyboardType:
+                                                          TextInputType.number,
+                                                    ),
+                                                    TextField(
+                                                      controller:
+                                                          averageBunchWeightController,
+                                                      decoration: InputDecoration(
+                                                          labelText:
+                                                              'Peso estimado'),
+                                                      keyboardType:
+                                                          TextInputType.number,
+                                                    ),
+                                                    DropdownButtonFormField<
+                                                        String>(
+                                                      value:
+                                                          selectedBatchOption,
+                                                      decoration: InputDecoration(
+                                                          labelText:
+                                                              'Número de lote'),
+                                                      items: batchOptions
+                                                          .map((option) {
+                                                        return DropdownMenuItem<
+                                                            String>(
+                                                          value: option,
+                                                          child: Text("Lote #" +
+                                                              option),
+                                                        );
+                                                      }).toList(),
+                                                      onChanged: (newValue) {
+                                                        setState(() {
+                                                          selectedBatchOption =
+                                                              newValue!;
+                                                        });
+                                                      },
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              actions: [
+                                                TextButton(
+                                                  onPressed: () {
+                                                    Navigator.pop(context);
+                                                  },
+                                                  child: Text('Cancelar'),
+                                                ),
+                                                ElevatedButton(
+                                                  onPressed: () async {
+                                                    // Validar cantidad y precio
 
-                                      // Validar cantidad y precio
+                                                    // Validar cantidad y precio
 
-                                      final cantidadSemilla =
-                                          cantidadSemillasController.text;
-                                      final cantidadF = double.tryParse(
-                                          cantidadFertilizanteController.text);
-                                      final cantidadP = double.tryParse(
-                                          cantidadpesticidaController.text);
-                                      final condicion =
-                                          condicionController.text;
-                                      final variedadBanano =
-                                          selectedvariedadOption;
-                                      final riego = selectedIrrigationOption;
-                                      final fumationDate =
-                                          fumgationDateController.text;
+                                                    final cantidadSemilla =
+                                                        cantidadSemillasController
+                                                            .text;
+                                                    final cantidadF =
+                                                        double.tryParse(
+                                                            cantidadFertilizanteController
+                                                                .text);
+                                                    final cantidadP =
+                                                        double.tryParse(
+                                                            cantidadpesticidaController
+                                                                .text);
+                                                    final condicion =
+                                                        condicionController
+                                                            .text;
+                                                    final variedadBanano =
+                                                        selectedvariedadOption;
+                                                    final riego =
+                                                        selectedIrrigationOption;
+                                                    final fumationDate =
+                                                        fumgationDateController
+                                                            .text;
 
-                                      final fechaI = sowingDateController.text;
-                                      final fechaF =
-                                          sowingDateEndController.text;
-                                      final selectedSowingOpt =
-                                          int.tryParse(selectedSowingOption);
+                                                    final fechaI =
+                                                        sowingDateController
+                                                            .text;
+                                                    final fechaF =
+                                                        sowingDateEndController
+                                                            .text;
+                                                    final selectedSowingOpt =
+                                                        int.tryParse(
+                                                            selectedSowingOption);
 
-                                      final numberB = int.tryParse(
-                                          numberOfBunchesController.text);
-                                      final rechazados = int.tryParse(
-                                          rejectedBunchesController.text);
-                                      final estimadoPeso = double.tryParse(
-                                          averageBunchWeightController.text);
-                                      final numberLote =
-                                          int.tryParse(selectedBatchOption);
+                                                    final numberB = int.tryParse(
+                                                        numberOfBunchesController
+                                                            .text);
+                                                    final rechazados = int.tryParse(
+                                                        rejectedBunchesController
+                                                            .text);
+                                                    final estimadoPeso =
+                                                        double.tryParse(
+                                                            averageBunchWeightController
+                                                                .text);
+                                                    final numberLote =
+                                                        int.tryParse(
+                                                            selectedBatchOption);
 
 // Validar que los campos no estén vacíos
-                                      if (condicion.isEmpty ||
-                                          variedadBanano.isEmpty) {
-                                        NotificationsService.showSnackBarError(
-                                            'Variedad o condición incorrectos');
-                                        return;
-                                      }
+                                                    if (condicion.isEmpty ||
+                                                        variedadBanano
+                                                            .isEmpty) {
+                                                      NotificationsService
+                                                          .showSnackBarError(
+                                                              'Variedad o condición incorrectos');
+                                                      return;
+                                                    }
 
 // Validar que las fechas sean válidas
-                                      // ignore: unnecessary_null_comparison
-                                      if (fechaI == null || fechaF == "") {
-                                        NotificationsService.showSnackBarError(
-                                            'Fecha o Nombre incorrectos');
-                                        return;
-                                      }
+                                                    // ignore: unnecessary_null_comparison
+                                                    if (fechaI == null ||
+                                                        fechaF == "") {
+                                                      NotificationsService
+                                                          .showSnackBarError(
+                                                              'Fecha o Nombre incorrectos');
+                                                      return;
+                                                    }
 
 // Validar la longitud máxima de los campos
-                                      final maxCharacters = 10;
+                                                    final maxCharacters = 10;
 
-                                      if (numberB.toString().length >
-                                          maxCharacters) {
-                                        numberOfBunchesController.text = numberB
-                                                .toString()
-                                                .substring(0, maxCharacters) +
-                                            '...';
-                                      }
+                                                    if (numberB
+                                                            .toString()
+                                                            .length >
+                                                        maxCharacters) {
+                                                      numberOfBunchesController
+                                                          .text = numberB
+                                                              .toString()
+                                                              .substring(0,
+                                                                  maxCharacters) +
+                                                          '...';
+                                                    }
 
-                                      if (estimadoPeso.toString().length >
-                                          maxCharacters) {
-                                        averageBunchWeightController.text =
-                                            estimadoPeso.toString().substring(
-                                                    0, maxCharacters) +
-                                                '...';
-                                      }
+                                                    if (estimadoPeso
+                                                            .toString()
+                                                            .length >
+                                                        maxCharacters) {
+                                                      averageBunchWeightController
+                                                          .text = estimadoPeso
+                                                              .toString()
+                                                              .substring(0,
+                                                                  maxCharacters) +
+                                                          '...';
+                                                    }
 
-                                      //final fecha = fechaController.text;
-                                      // ignore: unnecessary_null_comparison
-                                      if (condicion == null ||
-                                          condicion == "" ||
-                                          variedadBanano == null ||
-                                          variedadBanano == "") {
-                                        NotificationsService.showSnackBarError(
-                                            'variedad o condición incorrectos');
-                                        return;
-                                      }
+                                                    //final fecha = fechaController.text;
+                                                    // ignore: unnecessary_null_comparison
+                                                    if (condicion == null ||
+                                                        condicion == "" ||
+                                                        // ignore: unnecessary_null_comparison
+                                                        variedadBanano ==
+                                                            null ||
+                                                        variedadBanano == "") {
+                                                      NotificationsService
+                                                          .showSnackBarError(
+                                                              'variedad o condición incorrectos');
+                                                      return;
+                                                    }
 
-                                      // Actualizar el inventario
-                                      //  inventario.product = productoController.text;
-                                      // inventario.purchaseDate = DateFormat.yMd().parse(fechaController.text);
-                                      //inventario.quantity = cantidad;
-                                      //inventario.unitPrice = precio;
+                                                    // Actualizar el inventario
+                                                    //  inventario.product = productoController.text;
+                                                    // inventario.purchaseDate = DateFormat.yMd().parse(fechaController.text);
+                                                    //inventario.quantity = cantidad;
+                                                    //inventario.unitPrice = precio;
 
-                                      // Guardar cambios
-                                      await usersProvider
-                                          .postCreateParametrizacion(
-                                              condicion,
-                                              cantidadSemilla,
-                                              variedadBanano,
-                                              cantidadF!,
-                                              cantidadP!,
-                                              fumationDate,
-                                              riego,
-                                              fechaI,
-                                              fechaF,
-                                              selectedSowingOpt!,
-                                              estimadoPeso!,
-                                              numberB!,
-                                              rechazados!,
-                                              numberLote!);
+                                                    // Guardar cambios
+                                                    await usersProvider
+                                                        .postCreateParametrizacion(
+                                                            condicion,
+                                                            cantidadSemilla,
+                                                            variedadBanano,
+                                                            cantidadF!,
+                                                            cantidadP!,
+                                                            fumationDate,
+                                                            riego,
+                                                            fechaI,
+                                                            fechaF,
+                                                            selectedSowingOpt!,
+                                                            estimadoPeso!,
+                                                            numberB!,
+                                                            rechazados!,
+                                                            numberLote!);
 
-                                      NotificationsService.showSnackBar(
-                                          'Parametrización creada');
-                                      Navigator.pop(context);
-                                    },
-                                    child: Text('Guardar'),
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                        },
-                      );
-                    },
-                  ),
-                ],
+                                                    NotificationsService
+                                                        .showSnackBar(
+                                                            'Parametrización creada');
+                                                    Navigator.pop(context);
+                                                  },
+                                                  child: Text('Guardar'),
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
+                                      },
+                                    );
+                                  })
+                            ],
                             header: const Text('Siembra'),
                             columns: const [
                               DataColumn(tooltip: "ID", label: Text('ID')),
@@ -462,39 +568,46 @@ class _ParametrizacionViewState extends State<ParametrizacionView> {
               ),
               Padding(
                 padding: EdgeInsets.all(10),
-                child: ListView(
-                  physics: const ClampingScrollPhysics(),
-                  children: [
-                    PaginatedDataTable(
-                        header: const Text('Registro de racimo'),
-                        columns: const [
-                          DataColumn(
-                              tooltip: "Fecha Siembra",
-                              label: Text('Fecha Inicio')),
-                          DataColumn(
-                              tooltip: "Fecha Siembra",
-                              label: Text('Fecha Fin')),
-                          DataColumn(
-                              tooltip: "Tiempo estimado",
-                              label: Text('Tiempo estimado')),
-                          DataColumn(
-                              tooltip: "Número de racimos",
-                              label: Text('Núm. racimos')),
-                          DataColumn(
-                              tooltip: "Número de racimos rechazados",
-                              label: Text('Núm. rechazados')),
-                          DataColumn(
-                              tooltip: "Peso promedio",
-                              label: Text('Peso promedio')),
-                          DataColumn(
-                              tooltip: "Número de lote",
-                              label: Text('Núm. Lote')),
-                          DataColumn(
-                              tooltip: "ID parametrización 1",
-                              label: Text('ID de param. 1')),
-                        ],
-                        source: racimoDataSource)
-                  ],
+                child: Container(
+                  height: MediaQuery.of(context).size.height,
+                  color:
+                      const Color.fromARGB(183, 198, 199, 157).withOpacity(0.9),
+                  margin: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(16),
+                  child: ListView(
+                    physics: const ClampingScrollPhysics(),
+                    children: [
+                      PaginatedDataTable(
+                          header: const Text('Registro de racimo'),
+                          columns: const [
+                            DataColumn(
+                                tooltip: "Fecha Siembra",
+                                label: Text('Fecha Inicio')),
+                            DataColumn(
+                                tooltip: "Fecha Siembra",
+                                label: Text('Fecha Fin')),
+                            DataColumn(
+                                tooltip: "Tiempo estimado",
+                                label: Text('Tiempo estimado')),
+                            DataColumn(
+                                tooltip: "Número de racimos",
+                                label: Text('Núm. racimos')),
+                            DataColumn(
+                                tooltip: "Número de racimos rechazados",
+                                label: Text('Núm. rechazados')),
+                            DataColumn(
+                                tooltip: "Peso promedio",
+                                label: Text('Peso promedio')),
+                            DataColumn(
+                                tooltip: "Número de lote",
+                                label: Text('Núm. Lote')),
+                            DataColumn(
+                                tooltip: "ID parametrización 1",
+                                label: Text('ID de param. 1')),
+                          ],
+                          source: racimoDataSource)
+                    ],
+                  ),
                 ),
               )
             ])),

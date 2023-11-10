@@ -1,10 +1,11 @@
-import 'package:admin_dashboard/models/rolesPermisos.dart';
 import 'package:flutter/material.dart';
 
 import 'package:admin_dashboard/datatables/users_datasource.dart';
 import 'package:admin_dashboard/datatables/permisso_datasource.dart';
 
 import 'package:admin_dashboard/models/roles.dart';
+import 'package:admin_dashboard/models/rolesPermisos.dart';
+import 'package:admin_dashboard/models/usuario.dart';
 
 import 'package:admin_dashboard/providers/users_provider.dart';
 import 'package:admin_dashboard/providers/init_provider.dart';
@@ -22,6 +23,10 @@ class UsersView extends StatefulWidget {
 }
 
 class _UsersViewState extends State<UsersView> {
+
+  
+   final TextEditingController _filterController = TextEditingController();
+   List<Usuario> filterData = [];
 
   int c = 0;
   bool per = false;
@@ -42,6 +47,13 @@ class _UsersViewState extends State<UsersView> {
             Provider.of<UsersProvider>(context).getPermisos();
             c++;
     }
+  }
+
+   @override
+  void initState() {
+    super.initState();
+    // Llamada al proveedor para obtener los usuarios
+
   }
 
   @override
@@ -129,7 +141,30 @@ class _UsersViewState extends State<UsersView> {
                             onPageChanged: (page) {
                               print('page: $page');
                             },
-                            header: const Center(child: Text('Usuarios')),
+                            header:  Row(
+                              
+                              children: [
+                                Flexible(
+                                  flex: 1,
+                                  child: Container(
+                                    width: 200,
+                                    child: const Align(
+                                      alignment: Alignment.bottomLeft,
+                                      child: TextField(
+                                        decoration: InputDecoration(
+                                          hintText: 'Filtrar por nombre...',
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Flexible(
+                                  
+                                  flex: 1, child: Container(
+                                    margin: EdgeInsets.only(left: 30),
+                                    child: Center(child: Text('Usuarios'),)))
+                              ],
+                            ),
                             actions: [
                               CustomIconButton(
                                 text: 'Crear',

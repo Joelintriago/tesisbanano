@@ -141,6 +141,7 @@ class SiembraDataSource extends DataTableSource {
                   await usersProvider.getRoles();
                   if (usersProvider.roles.isEmpty) return;
 
+                  // ignore: use_build_context_synchronously
                   showDialog(
                     context: context,
                     builder: (BuildContext dialogContext) {
@@ -406,6 +407,7 @@ class SiembraDataSource extends DataTableSource {
                                   // ignore: unnecessary_null_comparison
                                   if (condicion == null ||
                                       condicion == "" ||
+                                      // ignore: unnecessary_null_comparison
                                       variedadBanano == null ||
                                       variedadBanano == "") {
                                     NotificationsService.showSnackBarError(
@@ -453,11 +455,30 @@ class SiembraDataSource extends DataTableSource {
               IconButton(
                 icon: Icon(Icons.delete, color: Colors.red),
                 onPressed: () async {
-                  final usersProvider =
-                      Provider.of<UsersProvider>(context, listen: false);
-                  await usersProvider.deleteParametrizacion(parametrizacion.id);
-                  NotificationsService.showSnackBar(
-                      'Parametrización eliminada');
+                  final dialog = AlertDialog(
+                    title: const Text('Eliminar usuario'),
+                    content: const Text('¿Desea eliminar el registro?'),
+                    actions: [
+                      TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text('Cancelar')),
+                      ElevatedButton(
+                          onPressed: () async {
+                            final usersProvider = Provider.of<UsersProvider>(
+                                context,
+                                listen: false);
+                            await usersProvider
+                                .deleteParametrizacion(parametrizacion.id);
+                            NotificationsService.showSnackBar(
+                                'Parametrización eliminada');
+                                 Navigator.of(context).pop();
+                          },
+                          child: const Text('Eliminar')),
+                    ],
+                  );
+                  showDialog(context: context, builder: (_) => dialog);
                 },
               ),
             ],
@@ -482,4 +503,3 @@ String _trimString(String value, int maxLength) {
   }
   return value;
 }
-
