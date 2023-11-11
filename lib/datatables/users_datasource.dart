@@ -9,7 +9,7 @@ import 'package:provider/provider.dart';
 import '../services/notification_service.dart';
 
 class UsersDataSource extends DataTableSource {
-  final List<Usuario> users;
+  List<Usuario> users;
   final BuildContext context;
 
   UsersDataSource(this.users, this.context);
@@ -208,5 +208,6 @@ class UsersDataSource extends DataTableSource {
 
   @override
   int get selectedRowCount => 0;
+
   
 }

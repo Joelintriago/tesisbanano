@@ -23,37 +23,28 @@ class UsersView extends StatefulWidget {
 }
 
 class _UsersViewState extends State<UsersView> {
-
-  
-   final TextEditingController _filterController = TextEditingController();
-   List<Usuario> filterData = [];
+  final TextEditingController _filterController = TextEditingController();
+  List<Usuario> filterData = [];
 
   int c = 0;
   bool per = false;
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    
+
     final miVariable = Provider.of<MiInicializador>(context);
     // Realizar las operaciones dependientes de InheritedWidget
     if (miVariable.c == 0) {
-      
       Provider.of<UsersProvider>(context).getRolesPermisos();
       print('imprimiendo $miVariable.c');
       miVariable.incrementC();
       print('imprimiendo $miVariable.c');
     }
-    if(c == 0){
-            Provider.of<UsersProvider>(context).getPermisos();
-            c++;
+    if (c == 0) {
+      Provider.of<UsersProvider>(context).getPermisos();
+      c++;
     }
-  }
-
-   @override
-  void initState() {
-    super.initState();
-    // Llamada al proveedor para obtener los usuarios
-
   }
 
   @override
@@ -67,6 +58,7 @@ class _UsersViewState extends State<UsersView> {
     final permisosDataSource =
         PermisosDataSource(permisos, this.context, permisosRol, false);
     bool _showPassword = false;
+    filterData = usersDataSource.users;
 
     int? selectedRoleId;
 
@@ -141,28 +133,49 @@ class _UsersViewState extends State<UsersView> {
                             onPageChanged: (page) {
                               print('page: $page');
                             },
-                            header:  Row(
-                              
+                            header: Row(
                               children: [
                                 Flexible(
                                   flex: 1,
                                   child: Container(
                                     width: 200,
-                                    child: const Align(
+                                    child: Align(
                                       alignment: Alignment.bottomLeft,
                                       child: TextField(
-                                        decoration: InputDecoration(
+                                        decoration: const InputDecoration(
                                           hintText: 'Filtrar por nombre...',
                                         ),
+                                        controller: _filterController,
+                                        onChanged: (value) async {
+                                          setState(() {
+                                            if (value.isNotEmpty) {
+                                              print('Texto ingresado: $value');
+                                              usersProvider.users = filterData
+                                                  .where((element) => element
+                                                      .firstName
+                                                      .toLowerCase()
+                                                      .contains(
+                                                          value.toLowerCase()))
+                                                  .toList();
+
+                                              print(
+                                                  'Data filtrada ${usersProvider.users}');
+                                            } else {
+                                              usersProvider.getPaginatedUsers();
+                                            }
+                                          });
+                                        },
                                       ),
                                     ),
                                   ),
                                 ),
                                 Flexible(
-                                  
-                                  flex: 1, child: Container(
-                                    margin: EdgeInsets.only(left: 30),
-                                    child: Center(child: Text('Usuarios'),)))
+                                    flex: 1,
+                                    child: Container(
+                                        margin: EdgeInsets.only(left: 30),
+                                        child: Center(
+                                          child: Text('Usuarios'),
+                                        )))
                               ],
                             ),
                             actions: [
