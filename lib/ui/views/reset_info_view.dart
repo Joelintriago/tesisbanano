@@ -1,10 +1,9 @@
-import 'package:flutter/material.dart';
-
 import 'package:admin_dashboard/ui/inputs/custom_inputs.dart';
 import 'package:admin_dashboard/ui/widgets/cards/white_card.dart';
+import 'package:flutter/material.dart';
 
 //TODO
-class ResetPasswordView extends StatelessWidget {
+class ResetInfoView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -14,7 +13,7 @@ class ResetPasswordView extends StatelessWidget {
           height: MediaQuery.of(context).size.height,
           color: const Color.fromARGB(183, 198, 199, 157).withOpacity(0.9),
           child: WhiteCard(
-              title: 'Actualizar contraseña',
+              title: 'Informaciíon general del usuario',
               child: Form(
                   child: Column(
                 children: [

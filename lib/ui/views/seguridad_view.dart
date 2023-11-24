@@ -50,7 +50,7 @@ class _UsersViewState extends State<UsersView> {
   @override
   Widget build(BuildContext context) {
     final usersProvider = Provider.of<UsersProvider>(context, listen: true);
-    final usersDataSource = UsersDataSource(usersProvider.users, context);
+    final usersDataSource = UsersDataSource(usersProvider.users, context,false);
 
     final rolesP = usersProvider.rolesPermisos;
     final permisosRol = usersProvider.permisosRol;

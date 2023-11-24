@@ -22,6 +22,7 @@ class Flurorouter{
   static String parametrizacion = '/dashboard/parametrizacion';
   static String operativoRoute  = '/dashboard/operativo';
   static String reporteRoute    = '/dashboard/reporte';
+  static String changeUserRoute = '/dashboard/info';
 
 
   static void configureRoutes(){
@@ -39,6 +40,7 @@ class Flurorouter{
 
     router.define(editRoute, handler: DashboardHandlers.editarUser,transitionType: TransitionType.none);
     router.define(changePassRoute, handler: DashboardHandlers.cambiarPass,transitionType: TransitionType.none);
+    router.define(changeUserRoute,handler: DashboardHandlers.changeUserView,transitionType: TransitionType.none);
 
 
     //404

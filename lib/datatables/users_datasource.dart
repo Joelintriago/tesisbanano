@@ -11,8 +11,9 @@ import '../services/notification_service.dart';
 class UsersDataSource extends DataTableSource {
   List<Usuario> users;
   final BuildContext context;
+  final bool report;
 
-  UsersDataSource(this.users, this.context);
+  UsersDataSource(this.users, this.context,this.report);
   
 
   @override
@@ -31,6 +32,7 @@ class UsersDataSource extends DataTableSource {
             : const Icon(Icons.check,
                 color: Colors.green), // Muestra un visto verde
       ),
+      if(report!=true)
       DataCell(Row(
         children: [
           IconButton(

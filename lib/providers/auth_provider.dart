@@ -95,11 +95,11 @@ class AuthProvider extends ChangeNotifier {
         NavigationService.replaceTo(Flurorouter.loginRoute);
         NotificationsService.showSnackBar('Correo enviado');
       } else {
-        NotificationsService.showSnackbarError('Email no válidos');
+        NotificationsService.showSnackBarError('Email no válidos');
       }
     } catch (e) {
       print('error en: $e');
-      NotificationsService.showSnackbarError(
+      NotificationsService.showSnackBarError(
           'Ha ocurrido un error en el servidor');
     }
   }
@@ -118,12 +118,12 @@ class AuthProvider extends ChangeNotifier {
         NavigationService.replaceTo(Flurorouter.loginRoute);
         NotificationsService.showSnackBar('Contraseña cambiada con éxito');
       } else {
-        NotificationsService.showSnackbarError(
+        NotificationsService.showSnackBarError(
             'No se pudo cambiar la contraseña');
       }
     } catch (e) {
       print('error en: $e');
-      NotificationsService.showSnackbarError(
+      NotificationsService.showSnackBarError(
           'Ha ocurrido un error en el servidor');
     }
   }

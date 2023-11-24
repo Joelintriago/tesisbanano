@@ -1,3 +1,7 @@
+import 'package:admin_dashboard/ui/widgets/costos_table.dart';
+import 'package:admin_dashboard/ui/widgets/invetario_table.dart';
+import 'package:admin_dashboard/ui/widgets/rentabilidad_table.dart'
+;
 import 'package:flutter/material.dart';
 
 class OperativoView extends StatelessWidget {
@@ -47,8 +51,8 @@ class OperativoView extends StatelessWidget {
                         .withOpacity(0.9),
                     margin: const EdgeInsets.all(16),
                     padding: const EdgeInsets.all(16),
-                    child: const Center(
-                      child: Text('Inventario'),
+                    child:  Center(
+                      child: InventarioView()
                     ),
                   ),
                 ),
@@ -60,8 +64,8 @@ class OperativoView extends StatelessWidget {
                         .withOpacity(0.9),
                     margin: const EdgeInsets.all(16),
                     padding: const EdgeInsets.all(16),
-                    child: const Center(
-                      child: Text('Costos'),
+                    child: Center(
+                      child: CostosView(),
                     ),
                   ),
                 ),
@@ -73,8 +77,8 @@ class OperativoView extends StatelessWidget {
                         .withOpacity(0.9),
                     margin: const EdgeInsets.all(16),
                     padding: const EdgeInsets.all(16),
-                    child: const Center(
-                      child: Text('Rentabilidad'),
+                    child: Center(
+                      child: RentabilidadView(),
                     ),
                   ),
                 )

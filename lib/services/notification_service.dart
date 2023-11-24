@@ -36,6 +36,5 @@ class NotificationsService {
     messengerKey.currentState!.showSnackBar(snackbar);
   }
 
-  static void showSnackbarError(String s) {}
   
 }

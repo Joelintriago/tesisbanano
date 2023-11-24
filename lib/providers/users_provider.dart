@@ -1,9 +1,3 @@
-import 'package:admin_dashboard/models/costos.dart';
-import 'package:admin_dashboard/models/inventario.dart';
-import 'package:admin_dashboard/models/parametrizacion.dart';
-import 'package:admin_dashboard/models/permisos.dart';
-import 'package:admin_dashboard/models/rentabilidad.dart';
-import 'package:admin_dashboard/models/tipoReporte.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -11,9 +5,16 @@ import 'package:http/http.dart' as http;
 import 'package:admin_dashboard/models/usuario.dart';
 import 'package:admin_dashboard/models/roles.dart';
 import 'package:admin_dashboard/models/rolesPermisos.dart';
+import 'package:admin_dashboard/models/costos.dart';
+import 'package:admin_dashboard/models/inventario.dart';
+import 'package:admin_dashboard/models/parametrizacion.dart';
+import 'package:admin_dashboard/models/permisos.dart';
+import 'package:admin_dashboard/models/rentabilidad.dart';
+import 'package:admin_dashboard/models/tipoReporte.dart';
 
 //import 'package:admin_dashboard/services/notification_service.dart';
 import 'package:admin_dashboard/services/local_storage.dart';
+import 'package:admin_dashboard/services/notification_service.dart';
 
 class UsersProvider extends ChangeNotifier {
   List<Usuario> users = [];
@@ -21,7 +22,11 @@ class UsersProvider extends ChangeNotifier {
   List<RolesPermisos> rolesPermisos = [];
   List<Permisos> permisos = [];
   List<Permisos> permisosRol = [];
+  List<ReporteTipo> reporteTipos = [];
   List<Parametrizacion> parametrizacion = [];
+  List<Inventario> inventario = [];
+  List<Costos> costos = [];
+  List<Rentabilidad> rentabilidad = [];
   Usuario? usuario;
   Rol? rol;
 
@@ -392,7 +397,10 @@ class UsersProvider extends ChangeNotifier {
     final response = await http.delete(Uri.parse(url), headers: headers);
 
     if (response.statusCode == 200) {
-      // La solicitud fue exitosa
+      NotificationsService.showSnackBar('Parametrización eliminada');
+    } else {
+      NotificationsService.showSnackBarError(
+          'Existen rentabilidades calculadas con este registro');
     }
 
     getSiembra();
@@ -543,6 +551,451 @@ class UsersProvider extends ChangeNotifier {
     }
 
     getSiembra();
+    isLoading = false;
+    notifyListeners();
+  }
+
+  //------------------------------- Costos------------------------------------//
+
+  getCostos() async {
+    costos.clear();
+    final url = 'http://localhost:4000/v1/cost-records';
+    final token = LocalStorage.prefs.getString('token') ??
+        ''; // Replace with your saved token
+
+    final headers = {
+      'Authorization': 'Bearer $token',
+      'Content-Type': 'application/json',
+    };
+
+    final response = await http.get(Uri.parse(url), headers: headers);
+
+    if (response.statusCode == 200) {
+      final responseBody = response.body;
+      final parsedResponse = json.decode(responseBody);
+      if (parsedResponse.containsKey('data')) {
+        final List<dynamic> data = parsedResponse['data'];
+
+        final List<Costos> costos =
+            data.map((item) => Costos.fromMap(item)).toList();
+
+        // Utiliza la lista de usuarios según tus necesidades
+        costos.forEach((costo) {
+          this.costos.add(costo);
+          print('Nombre: ${costo.id}');
+          print('Correo: ${costo.description}');
+        });
+      }
+    }
+
+    isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> putUpdateCostos(
+    String descripcion,
+    double manoO,
+    double combustible,
+    int inventario,
+    double total,
+    int id,
+  ) async {
+    final url = 'http://localhost:4000/v1/cost-records/$id';
+    final token = LocalStorage.prefs.getString('token') ?? '';
+    final double? insumo = await this.getInventarioXid(inventario);
+    double tInsumo = insumo! + total;
+    final data = {
+      "description": descripcion,
+      "input": insumo,
+      "labor": manoO,
+      "fuel": combustible,
+      "totalCosts": tInsumo,
+      "inventoryId": inventario,
+    };
+
+    final headers = {
+      'Authorization': 'Bearer $token',
+      'Content-Type': 'application/json',
+    };
+
+    final body = json.encode(data);
+
+    final response =
+        await http.put(Uri.parse(url), headers: headers, body: body);
+
+    if (response.statusCode == 200) {
+      // La solicitud fue exitosa
+    }
+
+    getCostos();
+    isLoading = false;
+    notifyListeners();
+  }
+
+  Future<double> getInventarioXid(int id) async {
+    final url = 'http://localhost:4000/v1/inventory/$id';
+    final token = LocalStorage.prefs.getString('token') ??
+        ''; // Replace with your saved token
+
+    final headers = {
+      'Authorization': 'Bearer $token',
+      'Content-Type': 'application/json',
+    };
+
+    final response = await http.get(Uri.parse(url), headers: headers);
+    print(response.body);
+
+    if (response.statusCode == 200) {
+      final responseBody = response.body;
+      final parsedResponse = json.decode(responseBody);
+      if (parsedResponse.containsKey('data')) {
+        final dynamic data = parsedResponse['data'];
+        final Inventario inventario = Inventario.fromMap(data);
+
+        // Realiza los cálculos necesarios para obtener el valor total
+        double x = inventario.quantity * inventario.unitPrice;
+        //double totalQuantity = total + x;
+
+        // Retorna el valor total calculado
+        return x;
+        // Calculate and return the sum of all quantities
+      }
+    }
+
+    isLoading = false;
+    notifyListeners();
+
+    // Return a default value or an appropriate value indicating an error
+    return 0;
+  }
+
+  Future<void> deleteCostos(
+    int id,
+  ) async {
+    final url = 'http://localhost:4000/v1/cost-records/$id';
+    final token = LocalStorage.prefs.getString('token') ?? '';
+
+    final headers = {
+      'Authorization': 'Bearer $token',
+      'Content-Type': 'application/json',
+    };
+
+    final response = await http.delete(Uri.parse(url), headers: headers);
+
+    if (response.statusCode == 200) {
+      NotificationsService.showSnackBar('Costo Eliminado');
+    } else {
+      NotificationsService.showSnackBarError(
+          'Existen registros de rentabilidad con el costo');
+    }
+
+    getInventario();
+    getCostos();
+    isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> postCreateCosto(
+    String descripcion,
+    double manoO,
+    double combustible,
+    int inventario,
+    double total,
+  ) async {
+    final url = 'http://localhost:4000/v1/cost-records';
+    final token = LocalStorage.prefs.getString('token') ?? '';
+    final double? insumo = await this.getInventarioXid(inventario);
+    double tInsumo = insumo! + total;
+    final data = {
+      "description": descripcion,
+      "input": insumo,
+      "labor": manoO,
+      "fuel": combustible,
+      "totalCosts": tInsumo,
+      "inventoryId": inventario,
+    };
+
+    final headers = {
+      'Authorization': 'Bearer $token',
+      'Content-Type': 'application/json',
+    };
+
+    final body = json.encode(data);
+
+    final response =
+        await http.post(Uri.parse(url), headers: headers, body: body);
+
+    if (response.statusCode == 200) {
+      // La solicitud fue exitosa
+      getCostos();
+      isLoading = false;
+      notifyListeners();
+      NotificationsService.showSnackBar('Costo agregado');
+    } else {
+      NotificationsService.showSnackBarError(
+          'No cuenta con los permisos necesarios.');
+    }
+  }
+
+  //--------------------------------Inventario----------------------------------------
+
+  getInventario() async {
+    inventario.clear();
+    final url = 'http://localhost:4000/v1/inventory';
+    final token = LocalStorage.prefs.getString('token') ??
+        ''; // Replace with your saved token
+
+    final headers = {
+      'Authorization': 'Bearer $token',
+      'Content-Type': 'application/json',
+    };
+
+    final response = await http.get(Uri.parse(url), headers: headers);
+
+    if (response.statusCode == 200) {
+      final responseBody = response.body;
+      final parsedResponse = json.decode(responseBody);
+      if (parsedResponse.containsKey('data')) {
+        final List<dynamic> data = parsedResponse['data'];
+
+        final List<Inventario> inventarios =
+            data.map((item) => Inventario.fromMap(item)).toList();
+
+        // Utiliza la lista de usuarios según tus necesidades
+        inventarios.forEach((inventario) {
+          this.inventario.add(inventario);
+          print('Nombre: ${inventario.id}');
+          print('Correo: ${inventario.product}');
+        });
+      }
+    }
+
+    isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> putUpdateInventario(
+    String producto,
+    String descripcion,
+    String fecha,
+    double precio,
+    int cantidad,
+    int id,
+  ) async {
+    final url = 'http://localhost:4000/v1/inventory/$id';
+    final token = LocalStorage.prefs.getString('token') ?? '';
+
+    final data = {
+      'purchaseDate': fecha,
+      'description': descripcion,
+      'product': producto,
+      'unitPrice': precio,
+      'quantity': cantidad,
+    };
+
+    final headers = {
+      'Authorization': 'Bearer $token',
+      'Content-Type': 'application/json',
+    };
+
+    final body = json.encode(data);
+
+    final response =
+        await http.put(Uri.parse(url), headers: headers, body: body);
+
+    if (response.statusCode == 200) {
+      NotificationsService.showSnackBar('Inventario Actualizado');
+    } else {
+      NotificationsService.showSnackBarError('No se pudo Actualizado');
+    }
+
+    getInventario();
+    isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> deleteInventario(
+    int id,
+  ) async {
+    final url = 'http://localhost:4000/v1/inventory/$id';
+    final token = LocalStorage.prefs.getString('token') ?? '';
+
+    final headers = {
+      'Authorization': 'Bearer $token',
+      'Content-Type': 'application/json',
+    };
+
+    final response = await http.delete(Uri.parse(url), headers: headers);
+
+    if (response.statusCode == 200) {
+      NotificationsService.showSnackBar('Inventario Eliminado');
+    } else {
+      NotificationsService.showSnackBarError('No se pudo Eliminado');
+    }
+
+    getInventario();
+    isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> postCreateInventario(
+    String producto,
+    String descripcion,
+    String fecha,
+    double precio,
+    int cantidad,
+  ) async {
+    final url = 'http://localhost:4000/v1/inventory';
+    final token = LocalStorage.prefs.getString('token') ?? '';
+
+    final data = {
+      'purchaseDate': fecha,
+      'description': descripcion,
+      'product': producto,
+      'unitPrice': precio,
+      'quantity': cantidad,
+    };
+
+    final headers = {
+      'Authorization': 'Bearer $token',
+      'Content-Type': 'application/json',
+    };
+
+    final body = json.encode(data);
+
+    final response =
+        await http.post(Uri.parse(url), headers: headers, body: body);
+
+    if (response.statusCode == 200) {
+      // La solicitud fue exitosa
+      getInventario();
+      isLoading = false;
+      notifyListeners();
+      NotificationsService.showSnackBar('Producto agregado al inventario');
+    } else {
+      NotificationsService.showSnackBarError(
+          'Existen registros de costos con este inventario.');
+    }
+  }
+
+  //---------------------------------Rentabilidad---------------------------------
+
+  getRentabilidad() async {
+    rentabilidad.clear();
+    final url = 'http://localhost:4000/v1/profitability';
+    final token = LocalStorage.prefs.getString('token') ??
+        ''; // Replace with your saved token
+
+    final headers = {
+      'Authorization': 'Bearer $token',
+      'Content-Type': 'application/json',
+    };
+
+    final response = await http.get(Uri.parse(url), headers: headers);
+
+    if (response.statusCode == 200) {
+      final responseBody = response.body;
+      final parsedResponse = json.decode(responseBody);
+      if (parsedResponse.containsKey('data')) {
+        final List<dynamic> data = parsedResponse['data'];
+
+        final List<Rentabilidad> rentab =
+            data.map((item) => Rentabilidad.fromMap(item)).toList();
+
+        // Utiliza la lista de usuarios según tus necesidades
+        rentab.forEach((rent) {
+          this.rentabilidad.add(rent);
+        });
+      }
+    }
+
+    isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> postCreateRentabilidad(
+    int costos,
+    int planing,
+  ) async {
+    final url = 'http://localhost:4000/v1/profitability';
+    final token = LocalStorage.prefs.getString('token') ?? '';
+
+    final data = {"costRecordId": costos, "planningSowing2Id": planing};
+
+    final headers = {
+      'Authorization': 'Bearer $token',
+      'Content-Type': 'application/json',
+    };
+
+    final body = json.encode(data);
+
+    final response =
+        await http.post(Uri.parse(url), headers: headers, body: body);
+
+    if (response.statusCode == 200) {
+      // La solicitud fue exitosa
+      getRentabilidad();
+      isLoading = false;
+      notifyListeners();
+      NotificationsService.showSnackBar('Rentabilidad agregada');
+    } else {
+      NotificationsService.showSnackBarError(
+          'No cuenta con los permisos necesarios.');
+    }
+  }
+
+  Future<void> deleteRentabilidad(
+    int id,
+  ) async {
+    final url = 'http://localhost:4000/v1/profitability/$id';
+    final token = LocalStorage.prefs.getString('token') ?? '';
+
+    final headers = {
+      'Authorization': 'Bearer $token',
+      'Content-Type': 'application/json',
+    };
+
+    final response = await http.delete(Uri.parse(url), headers: headers);
+
+    if (response.statusCode == 200) {
+      NotificationsService.showSnackBar('Rentabilidad eliminada');
+    }
+
+    getRentabilidad();
+    isLoading = false;
+    notifyListeners();
+  }
+
+  //------------------------------- Reporte ------------------------------
+  getTipoReporte() async {
+    reporteTipos.clear();
+    final url = 'http://localhost:4000/v1/reports/types';
+    final token = LocalStorage.prefs.getString('token') ??
+        ''; // Replace with your saved token
+
+    final headers = {
+      'Authorization': 'Bearer $token',
+      'Content-Type': 'application/json',
+    };
+
+    final response = await http.get(Uri.parse(url), headers: headers);
+
+    if (response.statusCode == 200) {
+      final responseBody = response.body;
+      final parsedResponse = json.decode(responseBody);
+      if (parsedResponse.containsKey('data')) {
+        final List<dynamic> data = parsedResponse['data'];
+
+        final List<ReporteTipo> reporteTip =
+            data.map((item) => ReporteTipo.fromMap(item)).toList();
+
+        // Utiliza la lista de usuarios según tus necesidades
+        reporteTip.forEach((reporteT) {
+          this.reporteTipos.add(reporteT);
+        });
+      }
+    }
+
     isLoading = false;
     notifyListeners();
   }

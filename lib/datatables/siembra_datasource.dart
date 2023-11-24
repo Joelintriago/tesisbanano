@@ -17,8 +17,6 @@ class SiembraDataSource extends DataTableSource {
   DataRow getRow(int index) {
     final Parametrizacion parametrizacion = parametrizaciones[index];
 
-    final TextEditingController condicionController = TextEditingController();
-
     final TextEditingController nombreSemillasController =
         TextEditingController();
     final TextEditingController cantidadpesticidaController =
@@ -37,18 +35,21 @@ class SiembraDataSource extends DataTableSource {
         TextEditingController();
     final TextEditingController averageBunchWeightController =
         TextEditingController();
-    List<String> sowingOptions = ["3", "6", "12"];
+
+    List<String> condition = ["Sunny", "Rainning"];
+    String selectedCondition = parametrizacion.climaticCondition.toString();
+    List<String> sowingOptions = ["8", "10"];
     String selectedSowingOption =
         parametrizacion.estimatedSowingTime.toString();
     List<String> batchOptions = ["1", "2", "3", "4", "5", "6"];
     String selectedBatchOption = parametrizacion.batchNumber.toString();
 
-    List<String> irrigationOptions = ["Motores/Bombas", "Electrico/Diesel"];
     String selectedIrrigationOption = parametrizacion.irrigation.toString();
+    List<String> irrigationOptions = (selectedCondition == "Rainning")
+        ? ["No disponible"]
+        : ["Motores/Bombas", "Electrico/Diesel"];
     List<String> variedadOptions = ["Cavendish", "Williams"];
     String selectedvariedadOption = "Cavendish";
-
-    condicionController.text = parametrizacion.climaticCondition;
 
     cantidadFertilizanteController.text =
         parametrizacion.fertilizerQuantityKG.toString();
@@ -58,6 +59,7 @@ class SiembraDataSource extends DataTableSource {
     fumgationDateController.text =
         DateFormat.yMd().format(parametrizacion.fumigationDate);
 
+    DateTime selectedStartDate = parametrizacion.sowingDate;
     sowingDateController.text =
         DateFormat.yMd().format(parametrizacion.sowingDate);
     sowingDateEndController.text =
@@ -138,9 +140,6 @@ class SiembraDataSource extends DataTableSource {
                 onPressed: () async {
                   final usersProvider =
                       Provider.of<UsersProvider>(context, listen: false);
-                  await usersProvider.getRoles();
-                  if (usersProvider.roles.isEmpty) return;
-
                   // ignore: use_build_context_synchronously
                   showDialog(
                     context: context,
@@ -153,10 +152,34 @@ class SiembraDataSource extends DataTableSource {
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  TextField(
-                                    controller: condicionController,
-                                    decoration: InputDecoration(
+                                  DropdownButtonFormField<String>(
+                                    value: selectedCondition,
+                                    decoration: const InputDecoration(
                                         labelText: 'Condición climática'),
+                                    items: condition.map((option) {
+                                      return DropdownMenuItem<String>(
+                                        value: option,
+                                        child: Text(option),
+                                      );
+                                    }).toList(),
+                                    onChanged: (value) {
+                                      setState(() {
+                                        selectedCondition = value!;
+                                        if (selectedCondition == 'Sunny') {
+                                          irrigationOptions = [
+                                            "Motores/Bombas",
+                                            "Electrico/Diesel"
+                                          ];
+                                          selectedIrrigationOption =
+                                              "Motores/Bombas";
+                                        } else if (selectedCondition ==
+                                            'Rainning') {
+                                          irrigationOptions = ["No disponible"];
+                                          selectedIrrigationOption =
+                                              "No disponible";
+                                        }
+                                      });
+                                    },
                                   ),
                                   DropdownButtonFormField<String>(
                                     value: selectedvariedadOption,
@@ -247,6 +270,7 @@ class SiembraDataSource extends DataTableSource {
                                             sowingDateController.text =
                                                 DateFormat.yMd()
                                                     .format(selectedDate);
+                                            selectedStartDate = selectedDate;
                                           });
                                         }
                                       });
@@ -261,7 +285,7 @@ class SiembraDataSource extends DataTableSource {
                                       showDatePicker(
                                         context: context,
                                         initialDate: DateTime.now(),
-                                        firstDate: DateTime(2000),
+                                        firstDate: selectedStartDate,
                                         lastDate: DateTime(2030),
                                       ).then((selectedDate) {
                                         if (selectedDate != null) {
@@ -305,8 +329,9 @@ class SiembraDataSource extends DataTableSource {
                                   ),
                                   TextField(
                                     controller: averageBunchWeightController,
-                                    decoration: InputDecoration(
-                                        labelText: 'Peso estimado'),
+                                    decoration: const InputDecoration(
+                                        labelText: 'Peso estimado',
+                                        hintText: 'Kg'),
                                     keyboardType: TextInputType.number,
                                   ),
                                   DropdownButtonFormField<String>(
@@ -347,7 +372,7 @@ class SiembraDataSource extends DataTableSource {
                                       cantidadFertilizanteController.text);
                                   final cantidadP = double.tryParse(
                                       cantidadpesticidaController.text);
-                                  final condicion = condicionController.text;
+                                  final condicion = selectedCondition;
                                   final variedadBanano = selectedvariedadOption;
                                   final riego = selectedIrrigationOption;
                                   final fumationDate =
@@ -456,7 +481,7 @@ class SiembraDataSource extends DataTableSource {
                 icon: Icon(Icons.delete, color: Colors.red),
                 onPressed: () async {
                   final dialog = AlertDialog(
-                    title: const Text('Eliminar usuario'),
+                    title: const Text('Eliminar siembra'),
                     content: const Text('¿Desea eliminar el registro?'),
                     actions: [
                       TextButton(
@@ -471,9 +496,7 @@ class SiembraDataSource extends DataTableSource {
                                 listen: false);
                             await usersProvider
                                 .deleteParametrizacion(parametrizacion.id);
-                            NotificationsService.showSnackBar(
-                                'Parametrización eliminada');
-                                 Navigator.of(context).pop();
+                            Navigator.of(context).pop();
                           },
                           child: const Text('Eliminar')),
                     ],

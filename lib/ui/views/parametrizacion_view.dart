@@ -36,8 +36,7 @@ class _ParametrizacionViewState extends State<ParametrizacionView> {
     final racimoDataSource = RegistroRacimoDataSource(
         usersProvider.parametrizacion, this.context, false);
 
-    final TextEditingController condicionController = TextEditingController();
-
+ 
     final TextEditingController cantidadSemillasController =
         TextEditingController();
     final TextEditingController cantidadpesticidaController =
@@ -48,6 +47,7 @@ class _ParametrizacionViewState extends State<ParametrizacionView> {
         TextEditingController();
 
     final TextEditingController sowingDateController = TextEditingController();
+    DateTime? selectedStartDate;
     final TextEditingController sowingDateEndController =
         TextEditingController();
     final TextEditingController numberOfBunchesController =
@@ -56,12 +56,16 @@ class _ParametrizacionViewState extends State<ParametrizacionView> {
         TextEditingController();
     final TextEditingController averageBunchWeightController =
         TextEditingController();
-    List<String> sowingOptions = ["3", "6", "12"];
-    String selectedSowingOption = "3";
+
+    List<String> condition = ["Sunny","Rainning"];
+    String selectedCondition = "Sunny";
+    List<String> sowingOptions = ["8", "10"];
+    String selectedSowingOption = "8";
     List<String> batchOptions = ["1", "2", "3", "4", "5", "6"];
     String selectedBatchOption = "1";
     List<String> variedadOptions = ["Cavendish", "Williams"];
     String selectedvariedadOption = "Cavendish";
+
 
     List<String> irrigationOptions = ["Motores/Bombas", "Electrico/Diesel"];
     String selectedIrrigationOption = "Motores/Bombas";
@@ -127,19 +131,37 @@ class _ParametrizacionViewState extends State<ParametrizacionView> {
                                                   mainAxisSize:
                                                       MainAxisSize.min,
                                                   children: [
-                                                    TextField(
-                                                      controller:
-                                                          condicionController,
-                                                      decoration:
-                                                          const InputDecoration(
-                                                              labelText:
-                                                                  'Condición climática'),
-                                                    ),
+                                                    DropdownButtonFormField<String>(
+                                                      value: selectedCondition,
+                                                       decoration: const InputDecoration(
+                                                          labelText:
+                                                              'Condicion climática'),
+                                                      items: condition
+                                                          .map((option) {
+                                                        return DropdownMenuItem<
+                                                            String>(
+                                                          value: option,
+                                                          child: Text(option),
+                                                        );
+                                                      }).toList(),
+                                                      onChanged: (value){
+                                                        setState(() {
+                                                          selectedCondition = value!;
+                                                           if (selectedCondition == 'Sunny') {
+                                                              irrigationOptions = ["Motores/Bombas", "Electrico/Diesel"];
+                                                              selectedIrrigationOption = "Motores/Bombas";
+                                                            } else if (selectedCondition == 'Rainning') {
+                                                              irrigationOptions = ["No disponible"];
+                                                              selectedIrrigationOption = "No disponible";
+                                                            }
+                                                        });
+                                                      }),
+                                                
                                                     DropdownButtonFormField<
                                                         String>(
                                                       value:
                                                           selectedvariedadOption,
-                                                      decoration: InputDecoration(
+                                                      decoration: const InputDecoration(
                                                           labelText:
                                                               'Variedad del banano'),
                                                       items: variedadOptions
@@ -265,6 +287,7 @@ class _ParametrizacionViewState extends State<ParametrizacionView> {
                                                                       .yMd()
                                                                   .format(
                                                                       selectedDate);
+                                                             selectedStartDate = selectedDate;
                                                             });
                                                           }
                                                         });
@@ -282,9 +305,9 @@ class _ParametrizacionViewState extends State<ParametrizacionView> {
                                                         showDatePicker(
                                                           context: context,
                                                           initialDate:
-                                                              DateTime.now(),
+                                                             selectedStartDate ?? DateTime.now(),
                                                           firstDate:
-                                                              DateTime(2000),
+                                                               selectedStartDate ?? DateTime.now(),
                                                           lastDate:
                                                               DateTime(2030),
                                                         ).then((selectedDate) {
@@ -344,9 +367,10 @@ class _ParametrizacionViewState extends State<ParametrizacionView> {
                                                     TextField(
                                                       controller:
                                                           averageBunchWeightController,
-                                                      decoration: InputDecoration(
+                                                      decoration: const InputDecoration(
                                                           labelText:
-                                                              'Peso estimado'),
+                                                              'Peso estimado',
+                                                          hintText: 'KG'),
                                                       keyboardType:
                                                           TextInputType.number,
                                                     ),
@@ -401,8 +425,7 @@ class _ParametrizacionViewState extends State<ParametrizacionView> {
                                                             cantidadpesticidaController
                                                                 .text);
                                                     final condicion =
-                                                        condicionController
-                                                            .text;
+                                                        selectedCondition;
                                                     final variedadBanano =
                                                         selectedvariedadOption;
                                                     final riego =

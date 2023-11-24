@@ -60,4 +60,6 @@ class CustomInputs {
       hintStyle: TextStyle(color: Colors.brown),
     );
   }
+
+  
 }

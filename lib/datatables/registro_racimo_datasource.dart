@@ -59,8 +59,7 @@ class RegistroRacimoDataSource extends DataTableSource {
         Tooltip(
           message: parametrizacion.averageBunchWeight
               .toString(), // Mensaje del tooltip sin _trimString
-          child: Text(
-              _trimString(parametrizacion.averageBunchWeight.toString(), 5)),
+          child:  Text('${_trimString(parametrizacion.averageBunchWeight.toString(), 5)}KG'),
         ),
       ),
       DataCell(

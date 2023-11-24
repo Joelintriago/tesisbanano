@@ -6,11 +6,12 @@ class NavbarItem extends StatefulWidget {
   final bool isActive;
   final Function onPressed;
 
-  const NavbarItem(
-      {required this.text,
-      required this.icon,
-      this.isActive = false,
-      required this.onPressed});
+  const NavbarItem({
+    required this.text,
+    required this.icon,
+    this.isActive = false,
+    required this.onPressed,
+  });
 
   @override
   State<NavbarItem> createState() => _NavbarItemState();

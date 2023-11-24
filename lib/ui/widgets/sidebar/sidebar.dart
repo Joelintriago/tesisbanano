@@ -71,10 +71,9 @@ class Sidebar extends StatelessWidget {
           ),
           SidebarItem(
             text: 'Salir',
-            icon: Icons.settings,
+            icon: Icons.exit_to_app_outlined,
             onPressed: () {
               Provider.of<AuthProvider>(context, listen: false).logout();
-              Navigator.of(context).pop();
             },
           ),
         ],

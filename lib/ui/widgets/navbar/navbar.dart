@@ -133,17 +133,31 @@ class NavBar extends StatelessWidget {
                 onPressed: () {
                   NavigationService.replaceTo(Flurorouter.dashboardRoute);
                 }),
-            NavbarItem(
+            /*NavbarItem(
                 text: 'Opciones de perfil',
                 icon: Icons.settings,
-                onPressed: () {}),
+                onPressed: () {}),*/
+             NavbarItem(
+                text: 'Datos',
+                icon: Icons.people,
+                onPressed: () {
+                  NavigationService.replaceTo(Flurorouter.changeUserRoute);
+                },
+                isActive: false),
+             NavbarItem(
+                text: 'Password',
+                icon: Icons.people,
+                onPressed: () {
+                  NavigationService.replaceTo(Flurorouter.changePassRoute);
+                },
+                isActive: false),
             NavbarItem(
                 text: user.firstName,
                 icon: Icons.people,
                 onPressed: () {},
                 isActive: false),
             NavbarItem(
-              text: 'Cerrar sesión',
+              text: 'Salir',
               icon: Icons.exit_to_app_outlined,
               onPressed: () {
                 Provider.of<AuthProvider>(context, listen: false).logout();
