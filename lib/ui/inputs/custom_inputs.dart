@@ -26,6 +26,7 @@ class CustomInputs {
   static InputDecoration searchInputDecoration({
     required String hint,
     required IconData icon,
+    
   }) {
     return InputDecoration(
       filled: true, // Agregar fondo lleno
@@ -58,6 +59,7 @@ class CustomInputs {
       prefixIcon: Icon(icon, color: Colors.brown),
       labelStyle: TextStyle(color: Colors.brown),
       hintStyle: TextStyle(color: Colors.brown),
+      contentPadding: EdgeInsets.all(10),
     );
   }
 

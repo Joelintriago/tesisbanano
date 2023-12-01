@@ -26,7 +26,6 @@ class InvetoryTableReport extends StatefulWidget {
 class _InvetoryTableReportState extends State<InvetoryTableReport> {
   int c = 0;
   @override
-
   Widget build(BuildContext context) {
     final usersProvider = Provider.of<UsersProvider>(context);
     final inventario = usersProvider.inventario;
@@ -55,6 +54,85 @@ class _InvetoryTableReportState extends State<InvetoryTableReport> {
                       size: 35,
                     ))),
           ),
+        ),
+        SizedBox(
+          height: 25,
+        ),
+        Text(
+          'Filtrar por fecha',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+        ),
+        Row(
+          children: [
+            const SizedBox(
+              width: 5,
+            ),
+            const Flexible(
+                child: Text(
+              'Fecha inicial',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+            )),
+            const SizedBox(
+              width: 10,
+            ),
+            Flexible(
+              child: Container(
+                width: 100,
+                child: TextField(
+                  decoration: const InputDecoration(
+                    labelText: 'Fecha de inicio:',
+                  ),
+                  readOnly: true,
+                  onTap: () {
+                    showDatePicker(
+                      context: context,
+                      initialDate: DateTime.now(),
+                      firstDate: DateTime(1900),
+                      lastDate: DateTime.now(),
+                    ).then((selectedDate) {
+                      if (selectedDate != null) {
+                        setState(() {});
+                      }
+                    });
+                  },
+                ),
+              ),
+            ),
+            const SizedBox(
+              width: 20,
+            ),
+            const Flexible(
+                child: Text(
+              'Fecha final',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+            )),
+            const SizedBox(
+              width: 10,
+            ),
+            Flexible(
+              child: Container(
+                width: 100,
+                child: TextField(
+                  decoration: const InputDecoration(
+                    labelText: 'Fecha final',
+                  ),
+                  readOnly: true,
+                  onTap: () {
+                    showDatePicker(
+                      context: context,
+                      initialDate: DateTime.now(),
+                      firstDate: DateTime(1900),
+                      lastDate: DateTime.now(),
+                    ).then((selectedDate) {
+                      if (selectedDate != null) {
+                        setState(() {});
+                      }
+                    });
+                  },
+                ),
+              ),
+            ),
+          ],
         ),
         Padding(
           padding: const EdgeInsets.all(15.0),
@@ -163,7 +241,7 @@ void generateAndDownloadPdfInventario(
                 style: pw.TextStyle(fontSize: 10),
               ),
             ),
-             pw.Container(
+            pw.Container(
               color: PdfColors.green100,
               alignment: pw.Alignment.center,
               child: pw.Text(

@@ -17,12 +17,14 @@ class Flurorouter{
   //Dashboard
   static String dashboardRoute  = '/dashboard';
   static String securityRoute   = '/dashboard/seguridad';
-  static String editRoute       = '/dashboard/editarUsuario';
   static String changePassRoute = '/dashboard/changePassword';
   static String parametrizacion = '/dashboard/parametrizacion';
   static String operativoRoute  = '/dashboard/operativo';
   static String reporteRoute    = '/dashboard/reporte';
-  static String changeUserRoute = '/dashboard/info';
+  static String changeUserRoute = '/dashboard/info/:token';
+
+  //Token password
+  static String ressetView  = '/auth/recovery-password/:token';
 
 
   static void configureRoutes(){
@@ -31,6 +33,9 @@ class Flurorouter{
     router.define(loginRoute, handler: AdminHandlers.login,transitionType: TransitionType.none);
     router.define(recoveryRoute, handler: AdminHandlers.modules,transitionType: TransitionType.none);
 
+    //Token password
+    router.define(ressetView,handler: AdminHandlers.resset,transitionType: TransitionType.none);
+
     //Dashboard
     router.define(dashboardRoute, handler: DashboardHandlers.dashboard,transitionType: TransitionType.none);
     router.define(securityRoute, handler:DashboardHandlers.security,transitionType: TransitionType.none);
@@ -38,7 +43,7 @@ class Flurorouter{
     router.define(operativoRoute, handler: DashboardHandlers.operativo,transitionType: TransitionType.none);
     router.define(reporteRoute, handler: DashboardHandlers.reportes,transitionType: TransitionType.none);
 
-    router.define(editRoute, handler: DashboardHandlers.editarUser,transitionType: TransitionType.none);
+
     router.define(changePassRoute, handler: DashboardHandlers.cambiarPass,transitionType: TransitionType.none);
     router.define(changeUserRoute,handler: DashboardHandlers.changeUserView,transitionType: TransitionType.none);
 

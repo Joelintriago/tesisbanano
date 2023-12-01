@@ -1,3 +1,4 @@
+import 'package:admin_dashboard/ui/inputs/custom_inputs.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -27,7 +28,6 @@ class PlaningTableReport extends StatefulWidget {
 class _PlaningTableReportState extends State<PlaningTableReport> {
   int c = 0;
   @override
-
   Widget build(BuildContext context) {
     final usersProvider = Provider.of<UsersProvider>(context);
 
@@ -50,8 +50,8 @@ class _PlaningTableReportState extends State<PlaningTableReport> {
                     0.4, // Ajusta el ancho del contenedor según tus necesidades
                 child: IconButton(
                     onPressed: () {
-                        generateAndDownloadPdfSiembra(
-                                  usersProvider.parametrizacion, costos);
+                      generateAndDownloadPdfSiembra(
+                          usersProvider.parametrizacion, costos);
                     },
                     icon: const Icon(
                       Icons.picture_as_pdf,
@@ -96,44 +96,118 @@ class _PlaningTableReportState extends State<PlaningTableReport> {
             onPageChanged: (page) {},
           ),
         ),
-        Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: PaginatedDataTable(
-                  columnSpacing: 8,
-                  sortAscending: usersProvider.ascending,
-                  sortColumnIndex: usersProvider.sortColumnIndex,
-                  header: const Center(
-                      child: Text(
-                    "Registro racimo",
-                    style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-                  )),
-                  headingRowHeight: 100,
-                  columns: const [
-                    DataColumn(
-                        tooltip: "Fecha Siembra", label: Text('Fecha Inicio')),
-                    DataColumn(
-                        tooltip: "Fecha Siembra", label: Text('Fecha Fin')),
-                    DataColumn(
-                        tooltip: "Tiempo estimado",
-                        label: Text('Tiempo estimado')),
-                    DataColumn(
-                        tooltip: "Número de racimos",
-                        label: Text('Núm. racimos')),
-                    DataColumn(
-                        tooltip: "Número de racimos rechazados",
-                        label: Text('Núm. rechazados')),
-                    DataColumn(
-                        tooltip: "Peso promedio", label: Text('Peso promedio')),
-                    DataColumn(
-                        tooltip: "Número de lote", label: Text('Núm. Lote')),
-                    DataColumn(
-                        tooltip: "ID parametrización 1",
-                        label: Text('ID de param. 1')),
-                  ],
-                  source: parametrizacion2DataSource,
-                  onPageChanged: (page) {},
+        SizedBox(
+          height: 25,
+        ),
+        Text(
+          'Filtrar por fecha',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+        ),
+        Row(
+          children: [
+            const SizedBox(
+              width: 5,
+            ),
+            const Flexible(
+                child: Text(
+              'Fecha inicial',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+            )),
+            const SizedBox(
+              width: 10,
+            ),
+            Flexible(
+              child: Container(
+                width: 100,
+                child: TextField(
+                  decoration: const InputDecoration(
+                    labelText: 'Fecha de inicio:',
+                  ),
+                  readOnly: true,
+                  onTap: () {
+                    showDatePicker(
+                      context: context,
+                      initialDate: DateTime.now(),
+                      firstDate: DateTime(1900),
+                      lastDate: DateTime.now(),
+                    ).then((selectedDate) {
+                      if (selectedDate != null) {
+                        setState(() {});
+                      }
+                    });
+                  },
                 ),
               ),
+            ),
+            const SizedBox(
+              width: 20,
+            ),
+            const Flexible(
+                child: Text(
+              'Fecha final',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+            )),
+            const SizedBox(
+              width: 10,
+            ),
+            Flexible(
+              child: Container(
+                width: 100,
+                child: TextField(
+                  decoration: const InputDecoration(
+                    labelText: 'Fecha final',
+                  ),
+                  readOnly: true,
+                  onTap: () {
+                    showDatePicker(
+                      context: context,
+                      initialDate: DateTime.now(),
+                      firstDate: DateTime(1900),
+                      lastDate: DateTime.now(),
+                    ).then((selectedDate) {
+                      if (selectedDate != null) {
+                        setState(() {});
+                      }
+                    });
+                  },
+                ),
+              ),
+            ),
+          ],
+        ),
+        Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: PaginatedDataTable(
+            columnSpacing: 8,
+            sortAscending: usersProvider.ascending,
+            sortColumnIndex: usersProvider.sortColumnIndex,
+            header: const Center(
+                child: Text(
+              "Registro racimo",
+              style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+            )),
+            headingRowHeight: 100,
+            columns: const [
+              DataColumn(tooltip: "Fecha Siembra", label: Text('Fecha Inicio')),
+              DataColumn(tooltip: "Fecha Siembra", label: Text('Fecha Fin')),
+              DataColumn(
+                  tooltip: "Tiempo estimado", label: Text('Tiempo estimado')),
+              DataColumn(
+                  tooltip: "Número de racimos", label: Text('Núm. racimos')),
+              DataColumn(
+                  tooltip: "Número de racimos rechazados",
+                  label: Text('Núm. rechazados')),
+              DataColumn(
+                  tooltip: "Peso promedio", label: Text('Peso promedio')),
+              DataColumn(tooltip: "Número de lote", label: Text('Núm. Lote')),
+              DataColumn(
+                  tooltip: "ID parametrización 1",
+                  label: Text('ID de param. 1')),
+            ],
+            source: parametrizacion2DataSource,
+            onPageChanged: (page) {},
+          ),
+        ),
       ],
     );
   }

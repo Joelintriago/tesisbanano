@@ -1,6 +1,7 @@
 import 'package:admin_dashboard/providers/auth_provider.dart';
 import 'package:admin_dashboard/providers/sidemenu_provider.dart';
 import 'package:admin_dashboard/router/router.dart';
+import 'package:admin_dashboard/services/local_storage.dart';
 import 'package:admin_dashboard/services/navigation_service.dart';
 import 'package:admin_dashboard/ui/widgets/navbar/navbar_item.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -75,6 +76,7 @@ class NavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final user = Provider.of<AuthProvider>(context).user!;
+    final token = LocalStorage.prefs.getString('token');
     return Container(
       width: double.infinity,
       height: 75,
@@ -141,7 +143,7 @@ class NavBar extends StatelessWidget {
                 text: 'Datos',
                 icon: Icons.people,
                 onPressed: () {
-                  NavigationService.replaceTo(Flurorouter.changeUserRoute);
+                  NavigationService.replaceTo('/dashboard/info/$token');
                 },
                 isActive: false),
              NavbarItem(

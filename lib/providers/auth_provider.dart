@@ -12,6 +12,8 @@ import 'package:flutter/material.dart';
 enum AuthStatus { checking, authenticated, notAuthenticated }
 
 class AuthProvider extends ChangeNotifier {
+  GlobalKey<FormState> formKey = new GlobalKey<FormState>();
+  GlobalKey<FormState> formKey2 = new GlobalKey<FormState>();
   String? _token;
   AuthStatus authStatus = AuthStatus.checking;
   User? user;
@@ -52,6 +54,7 @@ class AuthProvider extends ChangeNotifier {
         }).toList();*/
 
         this.user = User(
+          id: authResponse.data.user.id,
           email: authResponse.data.user.email,
           firstName: authResponse.data.user.firstName,
           lastName: authResponse.data.user.lastName,
@@ -128,7 +131,6 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-
   Future<bool> isAuthenticated() async {
     final token = LocalStorage.prefs.getString('token');
 
@@ -166,6 +168,7 @@ class AuthProvider extends ChangeNotifier {
               rolesList.map((role) => Role.fromMap(role)).toList();
 
           this.user = User(
+              id: userData['id'],
               email: userData['email'],
               firstName: userData['firstName'],
               lastName: userData['lastName'],
@@ -187,5 +190,92 @@ class AuthProvider extends ChangeNotifier {
     LocalStorage.prefs.remove('token');
     authStatus = AuthStatus.notAuthenticated;
     notifyListeners();
+  }
+
+  bool _validForm() {
+    return formKey.currentState!.validate();
+  }
+
+  bool _validForm2() {
+    return formKey2.currentState!.validate();
+  }
+
+  Future putUpdateProfileUser(
+    String firstName,
+    String lastName,
+    String email,
+  ) async {
+    final url = 'http://localhost:4000/v1/auth/info';
+    final token = LocalStorage.prefs.getString('token') ?? '';
+
+    if (!this._validForm()) {
+      NotificationsService.showSnackBarError('Formulario incorrecto');
+      return false;
+    }
+
+    final data = {
+      'firstName': firstName,
+      'lastName': lastName,
+      'email': email,
+    };
+
+    final headers = {
+      'Authorization': 'Bearer $token',
+      'Content-Type': 'application/json',
+    };
+
+    try {
+      final body = json.encode(data);
+      print(body);
+      await http.put(Uri.parse(url), headers: headers, body: body);
+      NotificationsService.showSnackBar('Información actualizada');
+      notifyListeners();
+      this.isAuthenticated();
+      return true;
+    } catch (e) {
+      print('error en updateUser: $e');
+      NotificationsService.showSnackBarError('No se pudo actualizar');
+      return false;
+    }
+  }
+
+  Future putUpdatePaswword(
+    String password,
+    String newPassword,
+  ) async {
+    final url = 'http://localhost:4000/v1/auth/update-password';
+    final token = LocalStorage.prefs.getString('token') ?? '';
+
+    if (!this._validForm2()) {
+      NotificationsService.showSnackBarError('Formulario incorrecto');
+      return false;
+    }
+
+    final data = {'password': password, 'newPassword': newPassword};
+
+    final headers = {
+      'Authorization': 'Bearer $token',
+      'Content-Type': 'application/json',
+    };
+
+    try {
+      final body = json.encode(data);
+      print(body);
+      final response =
+          await http.put(Uri.parse(url), headers: headers, body: body);
+
+      if (response.statusCode == 200) {
+        print('Contraseña actualizada');
+        NotificationsService.showSnackBar('Contraseña actualizada');
+      } else {
+        print(
+            'El servidor devolvió un estado diferente de 200: ${response.statusCode}');
+        NotificationsService.showSnackBarError('No se pudo actualizar');
+      }
+    } catch (e) {
+      print('error en updateUser: $e');
+      NotificationsService.showSnackBarError('No se pudo actualizar');
+      return false;
+    }
   }
 }

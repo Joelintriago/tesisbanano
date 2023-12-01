@@ -1,6 +1,5 @@
 //import 'package:admin_dashboard/router/admin_handlers.dart';
-import 'package:admin_dashboard/providers/init_provider.dart';
-import 'package:admin_dashboard/providers/login_form_provider.dart';
+
 import 'package:flutter/material.dart';
 
 
@@ -15,6 +14,9 @@ import 'package:provider/provider.dart';
 import 'package:admin_dashboard/providers/auth_provider.dart';
 import 'package:admin_dashboard/providers/sidemenu_provider.dart';
 import 'package:admin_dashboard/providers/users_provider.dart';
+import 'package:admin_dashboard/providers/init_provider.dart';
+import 'package:admin_dashboard/providers/login_form_provider.dart';
+import 'package:admin_dashboard/providers/user_form_provider.dart';
 
 //Services
 import 'package:admin_dashboard/services/local_storage.dart';
@@ -54,6 +56,7 @@ class AppState extends StatelessWidget {
         ChangeNotifierProvider(create: (_) =>AuthProvider(),lazy: false,),
         ChangeNotifierProvider(create: (_)=> SideMenuProvider(),lazy: false,),
         ChangeNotifierProvider(create: (_) => UsersProvider()),
+        ChangeNotifierProvider(create: (_) => UsersFormProvider()),
         ChangeNotifierProvider(create: (_) => LoginFormProvider(),),
         ChangeNotifierProvider(create: (_) =>MiInicializador(),),
       ],
