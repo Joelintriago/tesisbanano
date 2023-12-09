@@ -3,11 +3,12 @@
 import 'package:admin_dashboard/providers/auth_provider.dart';
 import 'package:admin_dashboard/router/router.dart';
 import 'package:admin_dashboard/services/navigation_service.dart';
-import 'package:fluro/fluro.dart';
+
 import 'package:flutter/material.dart';
 
-import 'package:admin_dashboard/ui/inputs/custom_inputs.dart';
+
 import 'package:admin_dashboard/ui/widgets/cards/white_card.dart';
+
 import 'package:provider/provider.dart';
 
 //TODO
@@ -22,9 +23,11 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
     final user = Provider.of<AuthProvider>(context).user!;
     final userProvider = Provider.of<AuthProvider>(context);
 
-    final TextEditingController lastPasswordController = TextEditingController();
+    final TextEditingController lastPasswordController =
+        TextEditingController();
     final TextEditingController newPasswordController = TextEditingController();
-    final TextEditingController repeatPasswordController = TextEditingController();
+    final TextEditingController repeatPasswordController =
+        TextEditingController();
 
     String lastPassword;
     String newPassword;
@@ -146,7 +149,6 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
                                     return 'El nombre debe ser de al menos tres caracteres.';
                                   return null;
                                 },
-
                               ),
                             ),
                           ),
@@ -244,9 +246,11 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
                                 onPressed: () async {
                                   lastPassword = lastPasswordController.text;
                                   newPassword = newPasswordController.text;
-                                  repeatPassword = repeatPasswordController.text;
+                                  repeatPassword =
+                                      repeatPasswordController.text;
 
-                                  await userProvider.putUpdatePaswword(lastPassword, newPassword);
+                                  await userProvider.putUpdatePaswword(
+                                      lastPassword, newPassword);
                                 },
                                 style: ButtonStyle(
                                   backgroundColor: MaterialStateProperty.all(

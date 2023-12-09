@@ -1,5 +1,6 @@
 import 'package:admin_dashboard/services/notification_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 
 import 'package:admin_dashboard/models/parametrizacion.dart';
@@ -198,18 +199,39 @@ class SiembraDataSource extends DataTableSource {
                                     },
                                   ),
                                   TextField(
+                                    inputFormatters: <TextInputFormatter>[
+                                      // for below version 2 use this
+                                      FilteringTextInputFormatter.allow(
+                                          RegExp(r'[0-9]')),
+
+                                      FilteringTextInputFormatter.digitsOnly
+                                    ],
                                     controller: nombreSemillasController,
                                     decoration: InputDecoration(
                                         labelText:
                                             'Cantidad de semilla/plantas'),
                                   ),
                                   TextField(
+                                    inputFormatters: <TextInputFormatter>[
+                                      // for below version 2 use this
+                                      FilteringTextInputFormatter.allow(
+                                          RegExp(r'[0-9]')),
+
+                                      FilteringTextInputFormatter.digitsOnly
+                                    ],
                                     controller: cantidadFertilizanteController,
                                     decoration: InputDecoration(
                                         labelText: 'Cantidad de fertilizante'),
                                     keyboardType: TextInputType.number,
                                   ),
                                   TextField(
+                                    inputFormatters: <TextInputFormatter>[
+                                      // for below version 2 use this
+                                      FilteringTextInputFormatter.allow(
+                                          RegExp(r'[0-9]')),
+
+                                      FilteringTextInputFormatter.digitsOnly
+                                    ],
                                     controller: cantidadpesticidaController,
                                     decoration: InputDecoration(
                                         labelText: 'Cantidad de pesticida'),
@@ -319,6 +341,13 @@ class SiembraDataSource extends DataTableSource {
                                     decoration: InputDecoration(
                                         labelText: 'Número de racimos'),
                                     keyboardType: TextInputType.number,
+                                    inputFormatters: <TextInputFormatter>[
+                                      // for below version 2 use this
+                                      FilteringTextInputFormatter.allow(
+                                          RegExp(r'[0-9]')),
+
+                                      FilteringTextInputFormatter.digitsOnly
+                                    ],
                                   ),
                                   TextField(
                                     controller: rejectedBunchesController,
@@ -326,6 +355,13 @@ class SiembraDataSource extends DataTableSource {
                                         labelText:
                                             'Número de racimos rechazados'),
                                     keyboardType: TextInputType.number,
+                                    inputFormatters: <TextInputFormatter>[
+                                      // for below version 2 use this
+                                      FilteringTextInputFormatter.allow(
+                                          RegExp(r'[0-9]')),
+
+                                      FilteringTextInputFormatter.digitsOnly
+                                    ],
                                   ),
                                   TextField(
                                     controller: averageBunchWeightController,
@@ -333,6 +369,13 @@ class SiembraDataSource extends DataTableSource {
                                         labelText: 'Peso estimado',
                                         hintText: 'Kg'),
                                     keyboardType: TextInputType.number,
+                                    inputFormatters: <TextInputFormatter>[
+                                      // for below version 2 use this
+                                      FilteringTextInputFormatter.allow(
+                                          RegExp(r'[0-9]')),
+
+                                      FilteringTextInputFormatter.digitsOnly
+                                    ],
                                   ),
                                   DropdownButtonFormField<String>(
                                     value: selectedBatchOption,

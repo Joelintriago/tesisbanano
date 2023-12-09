@@ -35,8 +35,20 @@ class UsersProvider extends ChangeNotifier {
   bool ascending = true;
   int? sortColumnIndex;
 
+  GlobalKey<FormState> formKeyCreate = new GlobalKey<FormState>();
+  GlobalKey<FormState> formKeyUpdate = new GlobalKey<FormState>();
+
   UsersProvider() {
     getPaginatedUsers();
+  }
+
+  //Validar formularios
+  bool validFormCreate() {
+    return formKeyCreate.currentState!.validate();
+  }
+
+  bool validFormUpdate() {
+    return formKeyUpdate.currentState!.validate();
   }
 
   //Obtener los usuarios
@@ -154,18 +166,24 @@ class UsersProvider extends ChangeNotifier {
       'Content-Type': 'application/json',
     };
 
-    final body = json.encode(data);
+    if (validFormUpdate() == true) {
+      final body = json.encode(data);
 
-    final response =
-        await http.put(Uri.parse(url), headers: headers, body: body);
+      final response =
+          await http.put(Uri.parse(url), headers: headers, body: body);
 
-    if (response.statusCode == 200) {
-      // La solicitud fue exitosa
+      if (response.statusCode == 200) {
+        NotificationsService.showSnackBar('Usuario actualizado');
+      }else{
+        NotificationsService.showSnackBarError('Error al actualizar');
+      }
+
+      getPaginatedUsers();
+      isLoading = false;
+      notifyListeners();
+    }else{
+      NotificationsService.showSnackBarError('Campos incorrectos');
     }
-
-    getPaginatedUsers();
-    isLoading = false;
-    notifyListeners();
   }
 
   Future<void> postCreateUser(
@@ -195,18 +213,25 @@ class UsersProvider extends ChangeNotifier {
       'Content-Type': 'application/json',
     };
 
-    final body = json.encode(data);
+    if (validFormCreate() == true) {
+      final body = json.encode(data);
 
-    final response =
-        await http.post(Uri.parse(url), headers: headers, body: body);
+      final response =
+          await http.post(Uri.parse(url), headers: headers, body: body);
 
-    if (response.statusCode == 200) {
-      // La solicitud fue exitosa
+      if (response.statusCode == 200) {
+        // La solicitud fue exitosa
+        NotificationsService.showSnackBar('Usuario creado');
+      } else {
+        NotificationsService.showSnackBarError('Error al crear usuario');
+      }
+
+      getPaginatedUsers();
+      isLoading = false;
+      notifyListeners();
+    } else {
+      NotificationsService.showSnackBarError('Campos incorrectos');
     }
-
-    getPaginatedUsers();
-    isLoading = false;
-    notifyListeners();
   }
 
   Future<void> deleteUser(

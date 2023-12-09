@@ -195,6 +195,7 @@ class InventarioDataSource extends DataTableSource {
                                   listen: false);
                               await usersProvider
                                   .deleteInventario(inventario.id);
+                                   Navigator.pop(context);
                             },
                             child: const Text('Eliminar')),
                       ],

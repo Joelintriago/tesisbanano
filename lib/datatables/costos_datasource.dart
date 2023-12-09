@@ -187,6 +187,8 @@ class CostosDataSource extends DataTableSource {
                                   context,
                                   listen: false);
                               await usersProvider.deleteCostos(costo.id);
+
+                               Navigator.pop(context);
                             },
                             child: const Text('Eliminar')),
                       ],

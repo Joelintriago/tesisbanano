@@ -1,8 +1,8 @@
-import 'package:admin_dashboard/ui/inputs/custom_inputs.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:admin_dashboard/providers/users_provider.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import 'package:universal_html/html.dart' as html;
@@ -27,10 +27,52 @@ class PlaningTableReport extends StatefulWidget {
 
 class _PlaningTableReportState extends State<PlaningTableReport> {
   int c = 0;
+  final TextEditingController sowingDateController = TextEditingController();
+  DateTime? selectedStartDate;
+  final TextEditingController sowingDateEndController = TextEditingController();
+  /*TextEditingController initialDateController = TextEditingController();
+  TextEditingController finalDateController = TextEditingController();*/
+  late UsersProvider usersProvider; // Declaración de usersProvider
+
+  @override
+  void initState() {
+    super.initState();
+    usersProvider = Provider.of<UsersProvider>(context, listen: false);
+  }
+
+  // La función para filtrar los datos usando las fechas con el formato 'MMM d, y'
+  void filtrarPorRangoFechas(String initialDateText, String finalDateText) {
+    try {
+      // Parsear las fechas utilizando el formato 'MM/d/yyyy' (mes/día/año)
+      DateTime fechaInicioSeleccionada =
+          DateFormat('MM/d/yyyy').parse(initialDateText);
+      DateTime fechaFinSeleccionada =
+          DateFormat('MM/d/yyyy').parse(finalDateText);
+
+      print('fechas ${fechaInicioSeleccionada} y ${fechaFinSeleccionada}');
+
+      // Filtrar los datos según el rango de fechas
+      List<Parametrizacion> datosFiltrados =
+          usersProvider.parametrizacion.where((element) {
+        return element.sowingDate.isAtSameMomentAs(fechaInicioSeleccionada) ||
+            (element.sowingDate.isAfter(fechaInicioSeleccionada) &&
+                element.sowingDateEnd.isBefore(fechaFinSeleccionada)) ||
+            element.sowingDateEnd.isAtSameMomentAs(fechaFinSeleccionada);
+      }).toList();
+
+      // Notificar a los widgets que los datos han cambiado
+      setState(() {
+        usersProvider.parametrizacion = datosFiltrados;
+      });
+    } catch (e) {
+      // Manejar el error de formato de fecha inválido aquí
+      print('Error al parsear la fecha: $e');
+      // Puedes mostrar un mensaje al usuario o realizar alguna otra acción para manejar el error.
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final usersProvider = Provider.of<UsersProvider>(context);
-
     final parametrizacionDataSource =
         SiembraDataSource(usersProvider.parametrizacion, this.context, true);
     final parametrizacion2DataSource = RegistroRacimoDataSource(
@@ -120,10 +162,9 @@ class _PlaningTableReportState extends State<PlaningTableReport> {
               child: Container(
                 width: 100,
                 child: TextField(
-                  decoration: const InputDecoration(
-                    labelText: 'Fecha de inicio:',
-                  ),
-                  readOnly: true,
+                  controller: sowingDateController,
+                  decoration:
+                      const InputDecoration(labelText: 'Fecha de inicio'),
                   onTap: () {
                     showDatePicker(
                       context: context,
@@ -132,7 +173,15 @@ class _PlaningTableReportState extends State<PlaningTableReport> {
                       lastDate: DateTime.now(),
                     ).then((selectedDate) {
                       if (selectedDate != null) {
-                        setState(() {});
+                        setState(() {
+                          sowingDateController.text =
+                              DateFormat.yMd().format(selectedDate);
+                          selectedStartDate = selectedDate;
+                          filtrarPorRangoFechas(
+                            sowingDateController.text,
+                            sowingDateEndController.text,
+                          );
+                        });
                       }
                     });
                   },
@@ -154,25 +203,69 @@ class _PlaningTableReportState extends State<PlaningTableReport> {
               child: Container(
                 width: 100,
                 child: TextField(
-                  decoration: const InputDecoration(
-                    labelText: 'Fecha final',
-                  ),
+                  enabled: sowingDateController.text.isNotEmpty,
+                  controller: sowingDateEndController,
+                  decoration: const InputDecoration(labelText: 'Fecha de fin'),
                   readOnly: true,
                   onTap: () {
                     showDatePicker(
                       context: context,
-                      initialDate: DateTime.now(),
-                      firstDate: DateTime(1900),
-                      lastDate: DateTime.now(),
+                      initialDate: selectedStartDate ?? DateTime.now(),
+                      firstDate: selectedStartDate ?? DateTime.now(),
+                      lastDate: DateTime(2030),
                     ).then((selectedDate) {
                       if (selectedDate != null) {
-                        setState(() {});
+                        setState(() {
+                          sowingDateEndController.text =
+                              DateFormat.yMd().format(selectedDate);
+                          filtrarPorRangoFechas(
+                            sowingDateController.text,
+                            sowingDateEndController.text,
+                          );
+                        });
                       }
                     });
                   },
                 ),
               ),
             ),
+            const SizedBox(
+              width: 10,
+            ),
+            Flexible(
+                child: Container(
+              width: 50, // Ancho del contenedor
+              height: 50, // Altura del contenedor
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 2,
+                    blurRadius: 3,
+                    offset: Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: IconButton(
+                onPressed: () {
+                  usersProvider.getSiembra();
+                  sowingDateController
+                      .clear(); // Esto limpia el texto del TextField
+                  sowingDateEndController.clear();
+                },
+                icon: Transform.rotate(
+                  angle:
+                      180 * 3.141592653589793 / 180, // Rotación de 180 grados
+                  child: Icon(
+                    Icons
+                        .autorenew, // Ícono de actualización (puede reemplazar con otro ícono de flecha)
+                    color: Colors.black, // Color del ícono
+                  ),
+                ),
+              ),
+            ))
           ],
         ),
         Padding(

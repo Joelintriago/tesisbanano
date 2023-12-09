@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:email_validator/email_validator.dart';
 
 import 'package:admin_dashboard/datatables/users_datasource.dart';
 import 'package:admin_dashboard/datatables/permisso_datasource.dart';
@@ -13,8 +14,10 @@ import 'package:admin_dashboard/providers/init_provider.dart';
 import 'package:admin_dashboard/services/notification_service.dart';
 
 import 'package:admin_dashboard/ui/buttons/custom_icon_button.dart';
+import 'package:flutter/services.dart';
 
 import 'package:provider/provider.dart';
+
 //import 'package:email_validator/email_validator.dart';
 
 class UsersView extends StatefulWidget {
@@ -50,7 +53,8 @@ class _UsersViewState extends State<UsersView> {
   @override
   Widget build(BuildContext context) {
     final usersProvider = Provider.of<UsersProvider>(context, listen: true);
-    final usersDataSource = UsersDataSource(usersProvider.users, context,false);
+    final usersDataSource =
+        UsersDataSource(usersProvider.users, context, false);
 
     final rolesP = usersProvider.rolesPermisos;
     final permisosRol = usersProvider.permisosRol;
@@ -207,108 +211,159 @@ class _UsersViewState extends State<UsersView> {
                                               child: AlertDialog(
                                                 title:
                                                     const Text('Crear usuario'),
-                                                content: Column(
-                                                  children: [
-                                                    TextField(
-                                                      controller:
-                                                          emailController,
-                                                      decoration:
-                                                          const InputDecoration(
-                                                              labelText:
-                                                                  'Email'),
-                                                    ),
-                                                    TextField(
-                                                      controller:
-                                                          nameController,
-                                                      decoration:
-                                                          const InputDecoration(
-                                                              labelText:
-                                                                  'Nombre'),
-                                                    ),
-                                                    TextField(
-                                                      controller:
-                                                          lastNameController,
-                                                      decoration:
-                                                          const InputDecoration(
-                                                              labelText:
-                                                                  'Apellido'),
-                                                    ),
-                                                    DropdownButtonFormField<
-                                                        String>(
-                                                      value: selectedStatus,
-                                                      decoration:
-                                                          const InputDecoration(
-                                                              labelText:
-                                                                  'Estado'),
-                                                      items: [
-                                                        'activo',
-                                                        'inactivo'
-                                                      ]
-                                                          .map<
-                                                              DropdownMenuItem<
-                                                                  String>>(
-                                                            (String value) =>
+                                                content: Form(
+                                                  autovalidateMode:
+                                                      AutovalidateMode.always,
+                                                  key: usersProvider
+                                                      .formKeyCreate,
+                                                  child: Column(
+                                                    children: [
+                                                      TextFormField(
+                                                        controller:
+                                                            emailController,
+                                                        decoration:
+                                                            const InputDecoration(
+                                                                labelText:
+                                                                    'Email'),
+                                                        validator: (value) {
+                                                          if (!EmailValidator
+                                                              .validate(
+                                                                  value ?? ''))
+                                                            return 'Email no válido';
+                                                          return null;
+                                                        },
+                                                      ),
+                                                      TextFormField(
+                                                        validator: (value) {
+                                                          if (value!.length <
+                                                              3) {
+                                                            return ('Escriba 3 o más caracteres');
+                                                          }
+                                                          return null;
+                                                        },
+                                                        controller:
+                                                            nameController,
+                                                        decoration:
+                                                            const InputDecoration(
+                                                                labelText:
+                                                                    'Nombre'),
+                                                        inputFormatters: <TextInputFormatter>[
+                                                          // for below version 2 use this
+                                                          FilteringTextInputFormatter
+                                                              .allow(RegExp(
+                                                                 r'^[a-zA-Z\s]+$')),
+                                                        ],
+                                                      ),
+                                                      TextFormField(
+                                                        validator: (value) {
+                                                          if (value!.length <
+                                                              3) {
+                                                            return ('Escriba 3 o más caracteres');
+                                                          }
+                                                          return null;
+                                                        },
+                                                        controller:
+                                                            lastNameController,
+                                                        decoration:
+                                                            const InputDecoration(
+                                                                labelText:
+                                                                    'Apellido'),
+                                                        inputFormatters: <TextInputFormatter>[
+                                                          // for below version 2 use this
+                                                          FilteringTextInputFormatter
+                                                              .allow(RegExp(
+                                                                  r'^[a-zA-Z\s]+$')),
+                                                        ],
+                                                      ),
+                                                      DropdownButtonFormField<
+                                                          String>(
+                                                        value: selectedStatus,
+                                                        decoration:
+                                                            const InputDecoration(
+                                                                labelText:
+                                                                    'Estado'),
+                                                        items: [
+                                                          'activo',
+                                                          'inactivo'
+                                                        ]
+                                                            .map<
                                                                 DropdownMenuItem<
-                                                                    String>(
-                                                              value: value,
-                                                              child:
-                                                                  Text(value),
-                                                            ),
-                                                          )
-                                                          .toList(),
-                                                      onChanged:
-                                                          (String? value) {
-                                                        selectedStatus = value;
-                                                      },
-                                                    ),
-                                                    DropdownButtonFormField<
-                                                        Roles>(
-                                                      value: null,
-                                                      decoration:
-                                                          const InputDecoration(
-                                                              labelText: 'Rol'),
-                                                      items: usersProvider.roles
-                                                          .map<
-                                                              DropdownMenuItem<
-                                                                  Roles>>(
-                                                            (Roles rol) =>
+                                                                    String>>(
+                                                              (String value) =>
+                                                                  DropdownMenuItem<
+                                                                      String>(
+                                                                value: value,
+                                                                child:
+                                                                    Text(value),
+                                                              ),
+                                                            )
+                                                            .toList(),
+                                                        onChanged:
+                                                            (String? value) {
+                                                          selectedStatus =
+                                                              value;
+                                                        },
+                                                      ),
+                                                      DropdownButtonFormField<
+                                                          Roles>(
+                                                        value: null,
+                                                        decoration:
+                                                            const InputDecoration(
+                                                                labelText:
+                                                                    'Rol'),
+                                                        items: usersProvider
+                                                            .roles
+                                                            .map<
                                                                 DropdownMenuItem<
-                                                                    Roles>(
-                                                              value: rol,
-                                                              child: Text(
-                                                                  rol.roleName),
-                                                            ),
-                                                          )
-                                                          .toList(),
-                                                      onChanged:
-                                                          (Roles? value) {
-                                                        selectedRoleId =
-                                                            value?.id;
-                                                      },
-                                                    ),
-                                                    TextField(
-                                                      controller:
-                                                          passwordController,
-                                                      obscureText:
-                                                          !_showPassword, // Oculta la contraseña si _showPassword es false
-                                                      decoration:
-                                                          InputDecoration(
-                                                        labelText: 'Contraseña',
-                                                        suffixIcon: IconButton(
-                                                          icon: Icon(_showPassword
-                                                              ? Icons.visibility
-                                                              : Icons
-                                                                  .visibility_off),
-                                                          onPressed: () {
-                                                            setState(() {
-                                                              _showPassword =
-                                                                  !_showPassword; // Cambia el estado de visibilidad de la contraseña
-                                                            });
-                                                          },
+                                                                    Roles>>(
+                                                              (Roles rol) =>
+                                                                  DropdownMenuItem<
+                                                                      Roles>(
+                                                                value: rol,
+                                                                child: Text(rol
+                                                                    .roleName),
+                                                              ),
+                                                            )
+                                                            .toList(),
+                                                        onChanged:
+                                                            (Roles? value) {
+                                                          selectedRoleId =
+                                                              value?.id;
+                                                        },
+                                                      ),
+                                                      TextFormField(
+                                                        validator: (value) {
+                                                          if (value!.length <
+                                                              3) {
+                                                            return 'La contraseña debe ser de 3 caracteres';
+                                                          }
+                                                        },
+                                                        controller:
+                                                            passwordController,
+                                                        obscureText:
+                                                            !_showPassword, // Oculta la contraseña si _showPassword es false
+                                                        decoration:
+                                                            InputDecoration(
+                                                          labelText:
+                                                              'Contraseña',
+                                                          suffixIcon:
+                                                              IconButton(
+                                                            icon: Icon(_showPassword
+                                                                ? Icons
+                                                                    .visibility
+                                                                : Icons
+                                                                    .visibility_off),
+                                                            onPressed: () {
+                                                              setState(() {
+                                                                _showPassword =
+                                                                    !_showPassword; // Cambia el estado de visibilidad de la contraseña
+                                                              });
+                                                            },
+                                                          ),
                                                         ),
                                                       ),
-                                                    ),
-                                                  ],
+                                                    ],
+                                                  ),
                                                 ),
                                                 actions: [
                                                   TextButton(
@@ -349,11 +404,12 @@ class _UsersViewState extends State<UsersView> {
                                                                 email,
                                                                 password,
                                                                 selectedRoleId!);
-                                                        NotificationsService
-                                                            .showSnackBar(
-                                                                'Usuario creado');
-                                                        Navigator.of(context)
-                                                            .pop();
+                                                        if (usersProvider
+                                                                .validFormCreate() ==
+                                                            true) {
+                                                          Navigator.of(context)
+                                                              .pop();
+                                                        }
                                                       },
                                                       child:
                                                           const Text('Guardar'))

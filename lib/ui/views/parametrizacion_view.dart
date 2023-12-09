@@ -1,6 +1,8 @@
 import 'package:admin_dashboard/ui/buttons/custom_icon_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+
 
 import 'package:admin_dashboard/services/notification_service.dart';
 
@@ -36,7 +38,6 @@ class _ParametrizacionViewState extends State<ParametrizacionView> {
     final racimoDataSource = RegistroRacimoDataSource(
         usersProvider.parametrizacion, this.context, false);
 
- 
     final TextEditingController cantidadSemillasController =
         TextEditingController();
     final TextEditingController cantidadpesticidaController =
@@ -57,7 +58,7 @@ class _ParametrizacionViewState extends State<ParametrizacionView> {
     final TextEditingController averageBunchWeightController =
         TextEditingController();
 
-    List<String> condition = ["Sunny","Rainning"];
+    List<String> condition = ["Sunny", "Rainning"];
     String selectedCondition = "Sunny";
     List<String> sowingOptions = ["8", "10"];
     String selectedSowingOption = "8";
@@ -65,7 +66,6 @@ class _ParametrizacionViewState extends State<ParametrizacionView> {
     String selectedBatchOption = "1";
     List<String> variedadOptions = ["Cavendish", "Williams"];
     String selectedvariedadOption = "Cavendish";
-
 
     List<String> irrigationOptions = ["Motores/Bombas", "Electrico/Diesel"];
     String selectedIrrigationOption = "Motores/Bombas";
@@ -131,39 +131,54 @@ class _ParametrizacionViewState extends State<ParametrizacionView> {
                                                   mainAxisSize:
                                                       MainAxisSize.min,
                                                   children: [
-                                                    DropdownButtonFormField<String>(
-                                                      value: selectedCondition,
-                                                       decoration: const InputDecoration(
-                                                          labelText:
-                                                              'Condicion climática'),
-                                                      items: condition
-                                                          .map((option) {
-                                                        return DropdownMenuItem<
+                                                    DropdownButtonFormField<
                                                             String>(
-                                                          value: option,
-                                                          child: Text(option),
-                                                        );
-                                                      }).toList(),
-                                                      onChanged: (value){
-                                                        setState(() {
-                                                          selectedCondition = value!;
-                                                           if (selectedCondition == 'Sunny') {
-                                                              irrigationOptions = ["Motores/Bombas", "Electrico/Diesel"];
-                                                              selectedIrrigationOption = "Motores/Bombas";
-                                                            } else if (selectedCondition == 'Rainning') {
-                                                              irrigationOptions = ["No disponible"];
-                                                              selectedIrrigationOption = "No disponible";
+                                                        value:
+                                                            selectedCondition,
+                                                        decoration:
+                                                            const InputDecoration(
+                                                                labelText:
+                                                                    'Condicion climática'),
+                                                        items: condition
+                                                            .map((option) {
+                                                          return DropdownMenuItem<
+                                                              String>(
+                                                            value: option,
+                                                            child: Text(option),
+                                                          );
+                                                        }).toList(),
+                                                        onChanged: (value) {
+                                                          setState(() {
+                                                            selectedCondition =
+                                                                value!;
+                                                            if (selectedCondition ==
+                                                                'Sunny') {
+                                                              irrigationOptions =
+                                                                  [
+                                                                "Motores/Bombas",
+                                                                "Electrico/Diesel"
+                                                              ];
+                                                              selectedIrrigationOption =
+                                                                  "Motores/Bombas";
+                                                            } else if (selectedCondition ==
+                                                                'Rainning') {
+                                                              irrigationOptions =
+                                                                  [
+                                                                "No disponible"
+                                                              ];
+                                                              selectedIrrigationOption =
+                                                                  "No disponible";
                                                             }
-                                                        });
-                                                      }),
-                                                
+                                                          });
+                                                        }),
                                                     DropdownButtonFormField<
                                                         String>(
                                                       value:
                                                           selectedvariedadOption,
-                                                      decoration: const InputDecoration(
-                                                          labelText:
-                                                              'Variedad del banano'),
+                                                      decoration:
+                                                          const InputDecoration(
+                                                              labelText:
+                                                                  'Variedad del banano'),
                                                       items: variedadOptions
                                                           .map((option) {
                                                         return DropdownMenuItem<
@@ -186,6 +201,15 @@ class _ParametrizacionViewState extends State<ParametrizacionView> {
                                                           const InputDecoration(
                                                               labelText:
                                                                   'Cantidad de semilla/plantas'),
+                                                      inputFormatters: <TextInputFormatter>[
+                                                        // for below version 2 use this
+                                                        FilteringTextInputFormatter
+                                                            .allow(RegExp(
+                                                                r'[0-9]')),
+
+                                                        FilteringTextInputFormatter
+                                                            .digitsOnly
+                                                      ],
                                                     ),
                                                     TextField(
                                                       controller:
@@ -196,6 +220,15 @@ class _ParametrizacionViewState extends State<ParametrizacionView> {
                                                                   'Cantidad de fertilizante'),
                                                       keyboardType:
                                                           TextInputType.number,
+                                                      inputFormatters: <TextInputFormatter>[
+                                                        // for below version 2 use this
+                                                        FilteringTextInputFormatter
+                                                            .allow(RegExp(
+                                                                r'[0-9]')),
+
+                                                        FilteringTextInputFormatter
+                                                            .digitsOnly
+                                                      ],
                                                     ),
                                                     TextField(
                                                       controller:
@@ -206,6 +239,13 @@ class _ParametrizacionViewState extends State<ParametrizacionView> {
                                                                   'Cantidad de pesticida'),
                                                       keyboardType:
                                                           TextInputType.number,
+                                                      inputFormatters: <TextInputFormatter>[
+                                                        FilteringTextInputFormatter
+                                                            .allow(RegExp(
+                                                                r'[0-9]')),
+                                                        FilteringTextInputFormatter
+                                                            .digitsOnly
+                                                      ],
                                                     ),
                                                     TextField(
                                                       controller:
@@ -287,7 +327,8 @@ class _ParametrizacionViewState extends State<ParametrizacionView> {
                                                                       .yMd()
                                                                   .format(
                                                                       selectedDate);
-                                                             selectedStartDate = selectedDate;
+                                                              selectedStartDate =
+                                                                  selectedDate;
                                                             });
                                                           }
                                                         });
@@ -305,9 +346,13 @@ class _ParametrizacionViewState extends State<ParametrizacionView> {
                                                         showDatePicker(
                                                           context: context,
                                                           initialDate:
-                                                             selectedStartDate ?? DateTime.now(),
+                                                              selectedStartDate ??
+                                                                  DateTime
+                                                                      .now(),
                                                           firstDate:
-                                                               selectedStartDate ?? DateTime.now(),
+                                                              selectedStartDate ??
+                                                                  DateTime
+                                                                      .now(),
                                                           lastDate:
                                                               DateTime(2030),
                                                         ).then((selectedDate) {
@@ -319,6 +364,8 @@ class _ParametrizacionViewState extends State<ParametrizacionView> {
                                                                       .yMd()
                                                                   .format(
                                                                       selectedDate);
+                                                                  print('prueba ${selectedStartDate}');
+                                                                  print('a ver ${sowingDateController}');
                                                             });
                                                           }
                                                         });
@@ -354,6 +401,15 @@ class _ParametrizacionViewState extends State<ParametrizacionView> {
                                                               'Número de racimos'),
                                                       keyboardType:
                                                           TextInputType.number,
+                                                      inputFormatters: <TextInputFormatter>[
+                                                        // for below version 2 use this
+                                                        FilteringTextInputFormatter
+                                                            .allow(RegExp(
+                                                                r'[0-9]')),
+
+                                                        FilteringTextInputFormatter
+                                                            .digitsOnly
+                                                      ],
                                                     ),
                                                     TextField(
                                                       controller:
@@ -363,14 +419,33 @@ class _ParametrizacionViewState extends State<ParametrizacionView> {
                                                               'Número de racimos rechazados'),
                                                       keyboardType:
                                                           TextInputType.number,
+                                                      inputFormatters: <TextInputFormatter>[
+                                                        // for below version 2 use this
+                                                        FilteringTextInputFormatter
+                                                            .allow(RegExp(
+                                                                r'[0-9]')),
+
+                                                        FilteringTextInputFormatter
+                                                            .digitsOnly
+                                                      ],
                                                     ),
                                                     TextField(
+                                                      inputFormatters: <TextInputFormatter>[
+                                                        // for below version 2 use this
+                                                        FilteringTextInputFormatter
+                                                            .allow(RegExp(
+                                                                r'[0-9]')),
+
+                                                        FilteringTextInputFormatter
+                                                            .digitsOnly
+                                                      ],
                                                       controller:
                                                           averageBunchWeightController,
-                                                      decoration: const InputDecoration(
-                                                          labelText:
-                                                              'Peso estimado',
-                                                          hintText: 'KG'),
+                                                      decoration:
+                                                          const InputDecoration(
+                                                              labelText:
+                                                                  'Peso estimado',
+                                                              hintText: 'KG'),
                                                       keyboardType:
                                                           TextInputType.number,
                                                     ),

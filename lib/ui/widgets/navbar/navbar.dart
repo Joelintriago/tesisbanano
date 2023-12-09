@@ -139,14 +139,14 @@ class NavBar extends StatelessWidget {
                 text: 'Opciones de perfil',
                 icon: Icons.settings,
                 onPressed: () {}),*/
-             NavbarItem(
+            NavbarItem(
                 text: 'Datos',
                 icon: Icons.people,
                 onPressed: () {
                   NavigationService.replaceTo('/dashboard/info/$token');
                 },
                 isActive: false),
-             NavbarItem(
+            NavbarItem(
                 text: 'Password',
                 icon: Icons.people,
                 onPressed: () {
@@ -156,7 +156,9 @@ class NavBar extends StatelessWidget {
             NavbarItem(
                 text: user.firstName,
                 icon: Icons.people,
-                onPressed: () {},
+                onPressed: () {
+                  //crearMenu(context);
+                },
                 isActive: false),
             NavbarItem(
               text: 'Salir',
@@ -186,4 +188,39 @@ class NavBar extends StatelessWidget {
               color: Colors.black12,
             )
           ]);
+
+  /*Future<void> crearMenu(BuildContext context) async {
+    final RenderBox renderBox = context.findRenderObject() as RenderBox;
+    final offset = renderBox.localToGlobal(Offset.zero);
+
+    final left = offset.dx;
+    final top = offset.dy + renderBox.size.height;
+
+    final right = left + renderBox.size.width;
+
+    List<PopupMenuItem<int>> items = [
+      PopupMenuItem<int>(
+        value: 0,
+        child: ListTile(
+          leading: Icon(
+            Icons.add,
+            color: Colors.white,
+          ),
+          title: Text(
+            'Add action',
+            style: TextStyle(color: Colors.white),
+          ),
+        ),
+      ),
+    ];
+
+    final int? result = await showMenu<int?>(
+      color: Colors.black,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ), context: context,
+      position: RelativeRect.fromLTRB(left, top, right, 0.0),
+      items: items,
+    );
+  }*/
 }

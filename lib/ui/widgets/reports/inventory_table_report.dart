@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 
 import 'package:provider/provider.dart';
 import 'package:admin_dashboard/providers/users_provider.dart';
@@ -25,9 +26,49 @@ class InvetoryTableReport extends StatefulWidget {
 
 class _InvetoryTableReportState extends State<InvetoryTableReport> {
   int c = 0;
+  final TextEditingController inventoryDateController = TextEditingController();
+  DateTime? selectedStartDate;
+  final TextEditingController inventoryDateEndController = TextEditingController();
+  /*TextEditingController initialDateController = TextEditingController();
+  TextEditingController finalDateController = TextEditingController();*/
+  late UsersProvider usersProvider; // Declaración de usersProvider
+
+  @override
+  void initState() {
+    super.initState();
+    usersProvider = Provider.of<UsersProvider>(context, listen: false);
+  }
+
+    void filtrarPorRangoFechas(String initialDateText, String finalDateText) {
+    try {
+      // Parsear las fechas utilizando el formato 'MM/d/yyyy' (mes/día/año)
+      DateTime fechaInicioSeleccionada =
+          DateFormat('MM/d/yyyy').parse(initialDateText);
+      DateTime fechaFinSeleccionada =
+          DateFormat('MM/d/yyyy').parse(finalDateText);
+
+      print('fechas ${fechaInicioSeleccionada} y ${fechaFinSeleccionada}');
+
+      // Filtrar los datos según el rango de fechas
+      List<Inventario> datosFiltrados =
+          usersProvider.inventario.where((element) {
+        return (element.purchaseDate.isAtSameMomentAs(fechaInicioSeleccionada) || element.purchaseDate.isAfter(fechaInicioSeleccionada))
+        && (element.purchaseDate.isAtSameMomentAs(fechaFinSeleccionada)|| element.purchaseDate.isBefore(fechaFinSeleccionada));
+      }).toList();
+
+      // Notificar a los widgets que los datos han cambiado
+      setState(() {
+        usersProvider.inventario = datosFiltrados;
+      });
+    } catch (e) {
+      // Manejar el error de formato de fecha inválido aquí
+      print('Error al parsear la fecha: $e');
+      // Puedes mostrar un mensaje al usuario o realizar alguna otra acción para manejar el error.
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final usersProvider = Provider.of<UsersProvider>(context);
     final inventario = usersProvider.inventario;
     final costos = usersProvider.costos;
 
@@ -79,10 +120,9 @@ class _InvetoryTableReportState extends State<InvetoryTableReport> {
               child: Container(
                 width: 100,
                 child: TextField(
-                  decoration: const InputDecoration(
-                    labelText: 'Fecha de inicio:',
-                  ),
-                  readOnly: true,
+                  controller: inventoryDateController,
+                  decoration:
+                      const InputDecoration(labelText: 'Fecha de inicio'),
                   onTap: () {
                     showDatePicker(
                       context: context,
@@ -91,7 +131,12 @@ class _InvetoryTableReportState extends State<InvetoryTableReport> {
                       lastDate: DateTime.now(),
                     ).then((selectedDate) {
                       if (selectedDate != null) {
-                        setState(() {});
+                        setState(() {
+                          inventoryDateController.text =
+                              DateFormat.yMd().format(selectedDate);
+                          selectedStartDate = selectedDate;
+
+                        });
                       }
                     });
                   },
@@ -113,19 +158,26 @@ class _InvetoryTableReportState extends State<InvetoryTableReport> {
               child: Container(
                 width: 100,
                 child: TextField(
-                  decoration: const InputDecoration(
-                    labelText: 'Fecha final',
-                  ),
+                  enabled: inventoryDateController.text.isNotEmpty,
+                  controller: inventoryDateEndController,
+                  decoration: const InputDecoration(labelText: 'Fecha de fin'),
                   readOnly: true,
                   onTap: () {
                     showDatePicker(
                       context: context,
-                      initialDate: DateTime.now(),
-                      firstDate: DateTime(1900),
-                      lastDate: DateTime.now(),
+                      initialDate: selectedStartDate ?? DateTime.now(),
+                      firstDate: selectedStartDate ?? DateTime.now(),
+                      lastDate: DateTime(2030),
                     ).then((selectedDate) {
                       if (selectedDate != null) {
-                        setState(() {});
+                        setState(() {
+                          inventoryDateEndController.text =
+                              DateFormat.yMd().format(selectedDate);
+                          filtrarPorRangoFechas(
+                            inventoryDateController.text,
+                            inventoryDateEndController.text
+                          );
+                        });
                       }
                     });
                   },
