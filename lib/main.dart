@@ -2,7 +2,6 @@
 
 import 'package:flutter/material.dart';
 
-
 import 'package:admin_dashboard/api/CafeApi.dart';
 
 import 'package:admin_dashboard/ui/layouts/auth/auth_layout.dart';
@@ -29,11 +28,9 @@ import 'package:admin_dashboard/router/router.dart';
 
 import 'package:responsive_grid/responsive_grid.dart';
 
-
-
 import 'package:url_strategy/url_strategy.dart';
 
-void main() async{
+void main() async {
   await LocalStorage.configurePrefs();
   CafeApi.configureDio();
   setPathUrlStrategy();
@@ -53,12 +50,22 @@ class AppState extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) =>AuthProvider(),lazy: false,),
-        ChangeNotifierProvider(create: (_)=> SideMenuProvider(),lazy: false,),
+        ChangeNotifierProvider(
+          create: (_) => AuthProvider(),
+          lazy: false,
+        ),
+        ChangeNotifierProvider(
+          create: (_) => SideMenuProvider(),
+          lazy: false,
+        ),
         ChangeNotifierProvider(create: (_) => UsersProvider()),
         ChangeNotifierProvider(create: (_) => UsersFormProvider()),
-        ChangeNotifierProvider(create: (_) => LoginFormProvider(),),
-        ChangeNotifierProvider(create: (_) =>MiInicializador(),),
+        ChangeNotifierProvider(
+          create: (_) => LoginFormProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => MiInicializador(),
+        ),
       ],
       child: const MyApp(),
     );
@@ -78,20 +85,24 @@ class MyApp extends StatelessWidget {
       navigatorKey: NavigationService.navigatorKey,
       scaffoldMessengerKey: NotificationsService.messengerKey,
       builder: (_, child) {
-
         final authProvider = Provider.of<AuthProvider>(context);
 
-        if (authProvider.authStatus == AuthStatus.checking){
+        if (authProvider.authStatus == AuthStatus.checking) {
           return SplashLayout();
         }
 
-        if(authProvider.authStatus == AuthStatus.authenticated){
-          return DashboardLayout(child: child!);
-        }else{
+        if (authProvider.authStatus == AuthStatus.authenticated) {
+          return Overlay(
+            initialEntries: [
+              OverlayEntry(builder: (context) {
+                return DashboardLayout(child: child!);
+              }),
+            ],
+          );
+        } else {
           return AuthLayout(child: child!);
         }
         //print(LocalStorage.prefs.getString('token'));
-
       },
     );
   }

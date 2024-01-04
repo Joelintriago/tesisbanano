@@ -9,7 +9,7 @@ class Costos {
     required this.labor,
     required this.fuel,
     required this.totalCosts,
-    required this.inventoryId,
+
 
   });
 
@@ -20,7 +20,7 @@ class Costos {
   double labor;
   double fuel;
   double totalCosts;
-  int inventoryId;
+
 
 
   factory Costos.fromJson(String str) => Costos.fromMap(json.decode(str));
@@ -35,7 +35,6 @@ class Costos {
         labor: json["labor"].toDouble(),
         fuel: json["fuel"].toDouble(),
         totalCosts: json["totalCosts"].toDouble(),
-        inventoryId: json["inventoryId"],
 
       );
 
@@ -47,7 +46,6 @@ class Costos {
         "labor": labor,
         "fuel": fuel,
         "totalCosts": totalCosts,
-        "inventoryId": inventoryId,
 
       };
 }

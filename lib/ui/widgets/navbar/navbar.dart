@@ -4,6 +4,8 @@ import 'package:admin_dashboard/router/router.dart';
 import 'package:admin_dashboard/services/local_storage.dart';
 import 'package:admin_dashboard/services/navigation_service.dart';
 import 'package:admin_dashboard/ui/widgets/navbar/navbar_item.dart';
+import 'package:admin_dashboard/ui/widgets/navbar/navbar_user.dart';
+import 'package:admin_dashboard/ui/widgets/sidebar/sidebar_item.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 
 import 'package:flutter/material.dart';
@@ -69,108 +71,223 @@ import 'package:provider/provider.dart';
   }
 }*/
 
-class NavBar extends StatelessWidget {
+enum Options { changePassword, logout }
+
+enum SampleItem { itemOne, itemTwo, itemThree }
+
+class NavBar extends StatefulWidget {
   const NavBar({Key? key});
 
   @override
+  State<NavBar> createState() => _NavBarState();
+}
+
+class _NavBarState extends State<NavBar> {
+  SampleItem? selectedMenu;
+  @override
   Widget build(BuildContext context) {
+    final sideMenuProvider = Provider.of<SideMenuProvider>(context);
+
+
+    List<PopupMenuEntry<Options>> itemBuilder(context) => [
+          const PopupMenuItem(
+            value: Options.changePassword,
+            child: Text('Change Password'),
+          ),
+          const PopupMenuItem(
+            value: Options.logout,
+            child: Text('Logout'),
+          ),
+        ];
+
     final size = MediaQuery.of(context).size;
     final user = Provider.of<AuthProvider>(context).user!;
     final token = LocalStorage.prefs.getString('token');
-    return Container(
-      width: double.infinity,
-      height: 75,
-      decoration: buildBoxDecoration(),
-      child: Row(
-        children: [
-          if (size.width <= 779) ...[
-            IconButton(
-              onPressed: () {
-                SideMenuProvider.openMenu();
-              },
-              icon: const Icon(Icons.menu_outlined),
-            ),
-            const Spacer(),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 2),
-              child: Container(
-                width: 250,
-                child: const AutoSizeText(
-                  'SISTEMA WEB DE COSTOS Y RENTABILIDAD DEL PROCESO DEL CULTIVO DEL BANANO',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                  ),
-                  maxLines: 5, // Número máximo de líneas permitidas
-                  minFontSize: 10, // Tamaño de fuente mínimo
-                  maxFontSize: 30, // Tamaño de fuente máximo
-                  overflow: TextOverflow.ellipsis, // Opción de desbordamiento
-                ),
-              ),
-            ),
-          ],
-          if (size.width >= 779) ...[
-            const SizedBox(
-              width: 5,
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 2),
-              child: Container(
-                width: 250,
-                child: const AutoSizeText(
-                  'SISTEMA WEB DE COSTOS Y RENTABILIDAD DEL PROCESO DEL CULTIVO DEL BANANO',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                  ),
-                  maxLines: 5, // Número máximo de líneas permitidas
-                  minFontSize: 10, // Tamaño de fuente mínimo
-                  maxFontSize: 30, // Tamaño de fuente máximo
-                  overflow: TextOverflow.ellipsis, // Opción de desbordamiento
-                ),
-              ),
-            ),
-            const Spacer(),
-            NavbarItem(
-                text: 'Inicio',
-                icon: Icons.home_sharp,
+
+    return Builder(builder: (BuildContext context) {
+      return Container(
+        width: double.infinity,
+        height: 75,
+        decoration: buildBoxDecoration(),
+        child: Row(
+          children: [
+            if (size.width <= 779) ...[
+              IconButton(
                 onPressed: () {
-                  NavigationService.replaceTo(Flurorouter.dashboardRoute);
-                }),
-            /*NavbarItem(
+                  SideMenuProvider.openMenu();
+                },
+                icon: const Icon(Icons.menu_outlined),
+              ),
+              const Spacer(),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 2),
+                child: Container(
+                  width: 250,
+                  child: const AutoSizeText(
+                    'SISTEMA WEB DE COSTOS Y RENTABILIDAD DEL PROCESO DEL CULTIVO DEL BANANO',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                    maxLines: 5, // Número máximo de líneas permitidas
+                    minFontSize: 10, // Tamaño de fuente mínimo
+                    maxFontSize: 30, // Tamaño de fuente máximo
+                    overflow: TextOverflow.ellipsis, // Opción de desbordamiento
+                  ),
+                ),
+              ),
+            ],
+            if (size.width >= 779) ...[
+              const SizedBox(
+                width: 5,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 2),
+                child: Container(
+                  width: 250,
+                  child: const AutoSizeText(
+                    'SISTEMA WEB DE COSTOS Y RENTABILIDAD DEL PROCESO DEL CULTIVO DEL BANANO',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                    maxLines: 5, // Número máximo de líneas permitidas
+                    minFontSize: 10, // Tamaño de fuente mínimo
+                    maxFontSize: 30, // Tamaño de fuente máximo
+                    overflow: TextOverflow.ellipsis, // Opción de desbordamiento
+                  ),
+                ),
+              ),
+              const Spacer(),
+              NavbarItem(
+                  text: 'Inicio',
+                  icon: Icons.home_sharp,
+                  onPressed: () {
+                    NavigationService.replaceTo(Flurorouter.dashboardRoute);
+                  }),
+                NavbarUserItem.NavbarUserItem(text: user.firstName, icon: Icons.people),
+              /*NavbarItem(
                 text: 'Opciones de perfil',
                 icon: Icons.settings,
                 onPressed: () {}),*/
-            NavbarItem(
-                text: 'Datos',
-                icon: Icons.people,
-                onPressed: () {
-                  NavigationService.replaceTo('/dashboard/info/$token');
+              /*NavbarItem(
+                  text: 'Datos',
+                  icon: Icons.people,
+                  onPressed: () {
+                    NavigationService.replaceTo('/dashboard/info/$token');
+                  },
+                  isActive: false),
+              NavbarItem(
+                  text: 'Password',
+                  icon: Icons.people,
+                  onPressed: () {
+                    NavigationService.replaceTo(Flurorouter.changePassRoute);
+                  },
+                  isActive: false),
+              NavbarItem(
+                  text: user.firstName,
+                  icon: Icons.people,
+                  onPressed: () {
+                    //crearMenu(context);
+                  },
+                  isActive: false),*/
+              /*Container(
+                  width: 50,
+                  child: Overlay(
+                    initialEntries: [
+                      OverlayEntry(builder: (context) {
+                        return PopupMenuButton(
+                          onSelected: onSelected,
+                          itemBuilder: itemBuilder,
+                          child: navbarItem,
+                        );
+                      })
+                    ],
+                  )),*/
+              MenuAnchor(
+                builder: (BuildContext context, MenuController controller,
+                    Widget? child) {
+                  return NavbarItem(
+                    text: 'Configuración de perfil',
+                    icon: Icons.settings_sharp,
+                    onPressed: () {
+                      if (controller.isOpen) {
+                        controller.close();
+                      } else {
+                        controller.open();
+                      }
+                    },
+                  );
                 },
-                isActive: false),
-            NavbarItem(
-                text: 'Password',
-                icon: Icons.people,
+                menuChildren: [
+                  SizedBox(
+                    width: double.infinity,
+                    child: InkWell(
+                      onTap: () {
+                        setState(() {
+                          selectedMenu = SampleItem.itemOne;
+                          // Agregar lógica para cambiar la contraseña
+                        });
+                      },
+                      child: Padding(
+                        padding: EdgeInsets
+                            .zero, // Ajustar el padding si es necesario
+                        child: SidebarItem(
+                          text: 'Editar perfil',
+                          onPressed: () {
+                            setState(() {
+                              selectedMenu = SampleItem.itemOne;
+                              // Agregar lógica para cambiar la contraseña
+                            });
+                            NavigationService.replaceTo(
+                                '/dashboard/info/$token');
+                          },
+                          isActive:  sideMenuProvider.currentPage == Flurorouter.changeUserRoute,
+                          icon: Icons.edit,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: double.infinity,
+                    child: InkWell(
+                      onTap: () {
+                        setState(() {
+                          selectedMenu = SampleItem.itemTwo;
+                          // Agregar lógica para actualizar la contraseña
+                        });
+                      },
+                      child: Padding(
+                        padding: EdgeInsets
+                            .zero, // Ajustar el padding si es necesario
+                        child: SidebarItem(
+                          text: 'Actualizar contraseña',
+                          onPressed: () {
+                            setState(() {
+                              selectedMenu = SampleItem.itemTwo;
+                              // Agregar lógica para actualizar la contraseña
+                            });
+                            NavigationService.replaceTo(
+                                Flurorouter.changePassRoute);
+                          },
+                          isActive: sideMenuProvider.currentPage == Flurorouter.changePassRoute,
+                          icon: Icons.refresh,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              NavbarItem(
+                text: 'Salir',
+                icon: Icons.exit_to_app_outlined,
                 onPressed: () {
-                  NavigationService.replaceTo(Flurorouter.changePassRoute);
+                  Provider.of<AuthProvider>(context, listen: false).logout();
                 },
-                isActive: false),
-            NavbarItem(
-                text: user.firstName,
-                icon: Icons.people,
-                onPressed: () {
-                  //crearMenu(context);
-                },
-                isActive: false),
-            NavbarItem(
-              text: 'Salir',
-              icon: Icons.exit_to_app_outlined,
-              onPressed: () {
-                Provider.of<AuthProvider>(context, listen: false).logout();
-              },
-            ),
+              ),
+            ],
           ],
-        ],
-      ),
-    );
+        ),
+      );
+    });
   }
 
   BoxDecoration buildBoxDecoration() => const BoxDecoration(
@@ -188,39 +305,4 @@ class NavBar extends StatelessWidget {
               color: Colors.black12,
             )
           ]);
-
-  /*Future<void> crearMenu(BuildContext context) async {
-    final RenderBox renderBox = context.findRenderObject() as RenderBox;
-    final offset = renderBox.localToGlobal(Offset.zero);
-
-    final left = offset.dx;
-    final top = offset.dy + renderBox.size.height;
-
-    final right = left + renderBox.size.width;
-
-    List<PopupMenuItem<int>> items = [
-      PopupMenuItem<int>(
-        value: 0,
-        child: ListTile(
-          leading: Icon(
-            Icons.add,
-            color: Colors.white,
-          ),
-          title: Text(
-            'Add action',
-            style: TextStyle(color: Colors.white),
-          ),
-        ),
-      ),
-    ];
-
-    final int? result = await showMenu<int?>(
-      color: Colors.black,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
-      ), context: context,
-      position: RelativeRect.fromLTRB(left, top, right, 0.0),
-      items: items,
-    );
-  }*/
 }

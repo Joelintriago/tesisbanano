@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class Logo extends StatelessWidget {
-
-
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<AuthProvider>(context).user!;
@@ -14,9 +12,8 @@ class Logo extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const CircleAvatar(
-            backgroundColor: Colors.black, // Fondo negro
-            // Aquí puedes agregar otras propiedades del CircleAvatar
-            radius: 30, // Tamaño del círculo
+            radius: 30,
+            backgroundImage: AssetImage('assets/user_sidebar.png'),
           ),
           const SizedBox(
             height: 5,

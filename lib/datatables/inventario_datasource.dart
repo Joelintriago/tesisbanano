@@ -2,6 +2,7 @@ import 'package:admin_dashboard/models/inventario.dart';
 import 'package:admin_dashboard/providers/users_provider.dart';
 import 'package:admin_dashboard/services/notification_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -15,12 +16,17 @@ class InventarioDataSource extends DataTableSource {
   DataRow getRow(int index) {
     final Inventario inventario = inventarios[index];
 
+    List<String> medida = ["LITRO", "GALON","NINGUNO","FUNDAS","SACOS"];
+    String selectedMedida = inventario.medida;
+
+    final TextEditingController codigoController = TextEditingController();
     final TextEditingController productoController = TextEditingController();
     final TextEditingController descripcionController = TextEditingController();
     final TextEditingController fechaController = TextEditingController();
     final TextEditingController cantidadController = TextEditingController();
     final TextEditingController precioController = TextEditingController();
 
+    codigoController.text = inventario.codigo;
     productoController.text = inventario.product;
     descripcionController.text = inventario.description;
     fechaController.text = DateFormat.yMd().format(inventario.purchaseDate);
@@ -31,8 +37,10 @@ class InventarioDataSource extends DataTableSource {
       index: index,
       cells: [
         DataCell(Text(inventario.id.toString())),
+        DataCell(Text(inventario.codigo)),
         DataCell(Text(inventario.product)),
         DataCell(Text(inventario.description)),
+        DataCell(Text(inventario.medida)),
         DataCell(Text(DateFormat('MMM d, y').format(inventario.purchaseDate))),
         DataCell(Text(inventario.quantity.toString())),
         DataCell(Text('\$${inventario.unitPrice.toString()}')),
@@ -67,6 +75,11 @@ class InventarioDataSource extends DataTableSource {
                                           InputDecoration(labelText: 'Nombre'),
                                     ),
                                     TextField(
+                                      controller: codigoController,
+                                      decoration:
+                                          InputDecoration(labelText: 'Codigo'),
+                                    ),
+                                    TextField(
                                       controller: fechaController,
                                       decoration:
                                           InputDecoration(labelText: 'Fecha'),
@@ -90,16 +103,46 @@ class InventarioDataSource extends DataTableSource {
                                     ),
                                     TextField(
                                       controller: descripcionController,
+                                      maxLength: 100,
                                       decoration: InputDecoration(
                                           labelText: 'Descripcion'),
                                     ),
+                                    DropdownButtonFormField<String>(
+                                        value: selectedMedida,
+                                        decoration: const InputDecoration(
+                                            labelText: 'Unidad/medida'),
+                                        items: medida.map((option) {
+                                          return DropdownMenuItem<String>(
+                                            value: option,
+                                            child: Text(option),
+                                          );
+                                        }).toList(),
+                                        onChanged: (value) {
+                                          setState(() {
+                                            selectedMedida = value!;
+                                          });
+                                        }),
                                     TextField(
                                       controller: cantidadController,
-                                      decoration:
-                                          InputDecoration(labelText: 'Cantidad'),
+                                      decoration: InputDecoration(
+                                          labelText: 'Cantidad'),
                                       keyboardType: TextInputType.number,
+                                      inputFormatters: <TextInputFormatter>[
+                                        // for below version 2 use this
+                                        FilteringTextInputFormatter.allow(
+                                            RegExp(r'[0-9]')),
+
+                                        FilteringTextInputFormatter.digitsOnly
+                                      ],
                                     ),
                                     TextField(
+                                      inputFormatters: <TextInputFormatter>[
+                                        // for below version 2 use this
+                                        FilteringTextInputFormatter.allow(
+                                            RegExp(r'[0-9]')),
+
+                                        FilteringTextInputFormatter.digitsOnly
+                                      ],
                                       controller: precioController,
                                       decoration: InputDecoration(
                                           labelText: 'Precio', hintText: '\$'),
@@ -117,10 +160,12 @@ class InventarioDataSource extends DataTableSource {
                                   ElevatedButton(
                                     onPressed: () async {
                                       // Validar cantidad y precio
+                                      final codigo = codigoController.text;
+                                      final medida = selectedMedida;
                                       final cantidad =
                                           int.tryParse(cantidadController.text);
-                                      final precio =
-                                          double.tryParse(precioController.text);
+                                      final precio = double.tryParse(
+                                          precioController.text);
                                       final productdescription =
                                           descripcionController.text;
                                       final productoname =
@@ -130,7 +175,10 @@ class InventarioDataSource extends DataTableSource {
                                       if (productoname == null ||
                                           productoname == "" ||
                                           productdescription == null ||
-                                          productdescription == ""
+                                          productdescription == "" ||
+                                          // ignore: unnecessary_null_comparison
+                                          codigo == null ||
+                                          codigo == " "
                                           // ignore: unnecessary_null_comparison
                                           ||
                                           fecha == null ||
@@ -147,22 +195,24 @@ class InventarioDataSource extends DataTableSource {
                                             'Cantidad y precio inválidos');
                                         return;
                                       }
-                              
+
                                       // Actualizar el inventario
                                       //  inventario.product = productoController.text;
                                       // inventario.purchaseDate = DateFormat.yMd().parse(fechaController.text);
                                       //inventario.quantity = cantidad;
                                       //inventario.unitPrice = precio;
-                              
+
                                       // Guardar cambios
                                       await usersProvider.putUpdateInventario(
+                                          codigo,
                                           productoname,
                                           productdescription,
+                                          medida,
                                           fecha,
                                           precio,
                                           cantidad,
                                           inventario.id);
-                              
+
                                       Navigator.pop(context);
                                     },
                                     child: Text('Guardar'),
@@ -195,7 +245,7 @@ class InventarioDataSource extends DataTableSource {
                                   listen: false);
                               await usersProvider
                                   .deleteInventario(inventario.id);
-                                   Navigator.pop(context);
+                              Navigator.pop(context);
                             },
                             child: const Text('Eliminar')),
                       ],

@@ -1,5 +1,6 @@
 import 'package:admin_dashboard/ui/buttons/custom_icon_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 
 import 'package:admin_dashboard/datatables/inventario_datasource.dart';
@@ -33,6 +34,11 @@ class _InventarioViewState extends State<InventarioView> {
     final inventario = usersProvider.inventario;
     final usersDataSource =
         new InventarioDataSource(inventario, this.context, false);
+
+    List<String> medida = ["LITRO", "GALON","NINGUNO","FUNDAS","SACOS"];
+    String selectedMedida = "LITRO";
+
+    final TextEditingController codigoController = TextEditingController();
     final TextEditingController productoController = TextEditingController();
     final TextEditingController fechaController = TextEditingController();
     final TextEditingController descripcionController = TextEditingController();
@@ -76,6 +82,11 @@ class _InventarioViewState extends State<InventarioView> {
                                           InputDecoration(labelText: 'Nombre'),
                                     ),
                                     TextField(
+                                      controller: codigoController,
+                                      decoration:
+                                          InputDecoration(labelText: 'Codigo'),
+                                    ),
+                                    TextField(
                                       controller: fechaController,
                                       decoration:
                                           InputDecoration(labelText: 'Fecha'),
@@ -99,20 +110,49 @@ class _InventarioViewState extends State<InventarioView> {
                                     ),
                                     TextField(
                                       controller: descripcionController,
+                                      maxLength: 100,
                                       decoration: InputDecoration(
                                           labelText: 'Descripcion'),
                                     ),
+                                    DropdownButtonFormField<String>(
+                                        value: selectedMedida,
+                                        decoration: const InputDecoration(
+                                            labelText: 'Unidad/medida'),
+                                        items: medida.map((option) {
+                                          return DropdownMenuItem<String>(
+                                            value: option,
+                                            child: Text(option),
+                                          );
+                                        }).toList(),
+                                        onChanged: (value) {
+                                          setState(() {
+                                            selectedMedida = value!;
+                                          });
+                                        }),
                                     TextField(
                                       controller: cantidadController,
                                       decoration: InputDecoration(
                                           labelText: 'Cantidad'),
                                       keyboardType: TextInputType.number,
+                                      inputFormatters: <TextInputFormatter>[
+                                        // for below version 2 use this
+                                        FilteringTextInputFormatter.allow(
+                                            RegExp(r'[0-9]')),
+
+                                        FilteringTextInputFormatter.digitsOnly
+                                      ],
                                     ),
                                     TextField(
+                                      inputFormatters: <TextInputFormatter>[
+                                        // for below version 2 use this
+                                        FilteringTextInputFormatter.allow(
+                                            RegExp(r'[0-9]')),
+
+                                        FilteringTextInputFormatter.digitsOnly
+                                      ],
                                       controller: precioController,
-                                      decoration:
-                                          InputDecoration(labelText: 'Precio',
-                                          hintText: '\$'),
+                                      decoration: InputDecoration(
+                                          labelText: 'Precio', hintText: '\$'),
                                       keyboardType: TextInputType.number,
                                     ),
                                   ],
@@ -127,17 +167,24 @@ class _InventarioViewState extends State<InventarioView> {
                                   ElevatedButton(
                                     onPressed: () async {
                                       // Validar cantidad y precio
+                                      final codigo = codigoController.text;
+                                      final medida = selectedMedida;
                                       final cantidad =
                                           int.tryParse(cantidadController.text);
                                       final precio = double.tryParse(
                                           precioController.text);
                                       final productoname =
                                           productoController.text;
-                                      final productdescription = descripcionController.text;
+                                      final productdescription =
+                                          descripcionController.text;
                                       final fecha = fechaController.text;
                                       // ignore: unnecessary_null_comparison
                                       if (productoname == null ||
                                           productoname == "" ||
+
+                                          // ignore: unnecessary_null_comparison
+                                          codigo == null ||
+                                          codigo == ""||
                                           // ignore: unnecessary_null_comparison
                                           productdescription == null ||
                                           productdescription == "" ||
@@ -166,8 +213,10 @@ class _InventarioViewState extends State<InventarioView> {
                                       // Guardar cambios
                                       print(fecha);
                                       await usersProvider.postCreateInventario(
+                                          codigo,
                                           productoname,
                                           productdescription,
+                                          medida,
                                           fecha,
                                           precio,
                                           cantidad);
@@ -186,14 +235,16 @@ class _InventarioViewState extends State<InventarioView> {
                 ],
                 header: const Center(
                     child: Text(
-                  "Inventario de insumos",
+                  "Insumos",
                   style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
                 )),
                 headingRowHeight: 100,
                 columns: const [
                   DataColumn(label: Text('Id')),
+                  DataColumn(label: Text('Codigo')),
                   DataColumn(label: Text('Producto')),
                   DataColumn(label: Text('Descripción')),
+                  DataColumn(label: Text('Unidad/Medida')),
                   DataColumn(label: Text('Fecha de compra')),
                   DataColumn(label: Text('Cantidad')),
                   DataColumn(label: Text('Precio')),

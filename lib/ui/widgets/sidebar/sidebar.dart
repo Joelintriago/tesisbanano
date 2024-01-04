@@ -1,6 +1,7 @@
 import 'package:admin_dashboard/providers/auth_provider.dart';
 import 'package:admin_dashboard/providers/sidemenu_provider.dart';
 import 'package:admin_dashboard/router/router.dart';
+import 'package:admin_dashboard/services/local_storage.dart';
 import 'package:admin_dashboard/services/navigation_service.dart';
 import 'package:admin_dashboard/ui/widgets/sidebar/logo.dart';
 import 'package:admin_dashboard/ui/widgets/sidebar/sidebar_item.dart';
@@ -17,6 +18,7 @@ class Sidebar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final sideMenuProvider = Provider.of<SideMenuProvider>(context);
+    final token = LocalStorage.prefs.getString('token');
 
     return Container(
       width: 250,
@@ -36,18 +38,26 @@ class Sidebar extends StatelessWidget {
             text: 'Inicio',
             icon: Icons.home_sharp,
             onPressed: () {
-              navigateTo(Flurorouter.dashboardRoute);
+              NavigationService.replaceTo(Flurorouter.dashboardRoute);
             },
           ),
           SidebarItem(
-            text: 'Opciones',
-            icon: Icons.settings,
-            onPressed: () {},
+            text: 'Editar perfil',
+            icon: Icons.edit,
+            onPressed: () {
+              NavigationService.replaceTo('/dashboard/info/$token');
+            },
+            isActive:
+                sideMenuProvider.currentPage == Flurorouter.changeUserRoute,
           ),
           SidebarItem(
-            text: 'Home',
-            icon: Icons.settings,
-            onPressed: () {},
+            text: 'Actualizar contraseña',
+            icon: Icons.refresh,
+            onPressed: () {
+              NavigationService.replaceTo(Flurorouter.changePassRoute);
+            },
+            isActive:
+                sideMenuProvider.currentPage == Flurorouter.changePassRoute,
           ),
           //modulos
           const SizedBox(
@@ -55,19 +65,42 @@ class Sidebar extends StatelessWidget {
           ),
           const TextSeparator(text: 'modulos'),
           SidebarItem(
+            isActive: sideMenuProvider.currentPage == Flurorouter.securityRoute,
+            text: 'Modulo seguridad',
+            icon: Icons.security,
+            onPressed: () {
+              NavigationService.replaceTo(Flurorouter.securityRoute);
+            },
+          ),
+          SidebarItem(
+            isActive:
+                sideMenuProvider.currentPage == Flurorouter.parametrizacion,
+            text: 'Modulo parametrizacion',
+            icon: Icons.build,
+            onPressed: () {
+              NavigationService.replaceTo(Flurorouter.parametrizacion);
+            },
+          ),
+          SidebarItem(
+            isActive:
+                sideMenuProvider.currentPage == Flurorouter.operativoRoute,
             text: 'Modulo operativo',
-            icon: Icons.settings,
-            onPressed: () {},
+            icon: Icons.shopping_cart_checkout,
+            onPressed: () {
+              NavigationService.replaceTo(Flurorouter.operativoRoute);
+            },
           ),
+
           SidebarItem(
-            text: 'Opciones de perfil',
-            icon: Icons.settings,
-            onPressed: () {},
+            isActive: sideMenuProvider.currentPage == Flurorouter.reporteRoute,
+            text: 'Modulo reportes',
+            icon: Icons.analytics_outlined,
+            onPressed: () {
+              NavigationService.replaceTo(Flurorouter.reporteRoute);
+            },
           ),
-          SidebarItem(
-            text: 'Home',
-            icon: Icons.settings,
-            onPressed: () {},
+          SizedBox(
+            height: 20.0,
           ),
           SidebarItem(
             text: 'Salir',
@@ -82,6 +115,7 @@ class Sidebar extends StatelessWidget {
   }
 
   BoxDecoration buildBoxDecoration() => const BoxDecoration(
+      
           gradient: LinearGradient(
             begin: Alignment.centerLeft, // Comienza desde la izquierda
             end: Alignment.centerRight, // Termina en la derecha

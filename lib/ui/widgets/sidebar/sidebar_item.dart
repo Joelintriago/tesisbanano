@@ -55,10 +55,10 @@ class _SidebarItemState extends State<SidebarItem> {
                       ),
                       Text(
                         widget.text,
-                        style: GoogleFonts.roboto(
+                        /*style: GoogleFonts.roboto(
                           fontSize: 14,
                           color: Colors.black.withOpacity(0.8),
-                        ),
+                        ),*/
                       ),
                     ],
                   ),

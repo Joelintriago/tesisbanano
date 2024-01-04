@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:admin_dashboard/models/costos.dart';
 import 'package:admin_dashboard/models/inventario.dart';
 import 'package:admin_dashboard/models/parametrizacion.dart';
+import 'package:multiselect/multiselect.dart';
 
 import 'package:provider/provider.dart';
 import 'package:admin_dashboard/providers/users_provider.dart';
@@ -22,7 +23,6 @@ class CostosDataSource extends DataTableSource {
   @override
   DataRow getRow(int index) {
     final Costos costo = costos[index];
-    int? selectedInventarioId = costo.inventoryId;
 
     final TextEditingController descriptionController = TextEditingController();
 
@@ -31,6 +31,15 @@ class CostosDataSource extends DataTableSource {
 
     descriptionController.text = costo.description;
     combustibleController.text = costo.fuel.toString();
+
+    final usersProvider = Provider.of<UsersProvider>(context);
+
+    List<String> inventarioNombres =
+        usersProvider.inventario.map((item) => item.product).toList();
+    List<Inventario> invent = usersProvider.inventario.toList();
+    List<String> selectedInventario = [];
+    List<Inventario> selectedItems = [];
+    double sumaTotal = 0.0;
 
     manoObraController.text = costo.labor.toString();
 
@@ -41,7 +50,6 @@ class CostosDataSource extends DataTableSource {
         DataCell(Text('\$${costo.labor.toString()}')),
         DataCell(Text('\$${costo.input.toString()}')),
         DataCell(Text('\$${costo.fuel.toString()}')),
-        DataCell(Text(costo.inventoryId.toString())),
         DataCell(Text(DateFormat('MMM d, y').format(costo.registerDate))),
         DataCell(Text('\$${costo.totalCosts.toString()}')),
         if (reporte != true)
@@ -86,23 +94,55 @@ class CostosDataSource extends DataTableSource {
                                           labelText: 'Costo Combustible'),
                                       keyboardType: TextInputType.number,
                                     ),
-                                    DropdownButton<int>(
-                                      value: selectedInventarioId,
-                                      onChanged: (newValue) {
+                                    DropDownMultiSelect(
+                                      options: inventarioNombres,
+                                      selectedValues: selectedInventario,
+                                      onChanged: (value) {
                                         setState(() {
-                                          selectedInventarioId = newValue;
+                                          selectedInventario = value.cast<
+                                              String>(); // Actualiza la lista de nombres seleccionados
                                         });
+
+                                        selectedItems.clear();
+                                        sumaTotal =
+                                            0.0; // Reinicia la suma total al cambiar la selección
+
+                                        for (var name in value) {
+                                          Inventario selectedItem =
+                                              invent.firstWhere(
+                                            (item) => item.product == name,
+                                            orElse: () => Inventario(
+                                              id: -1,
+                                              codigo: '',
+                                              purchaseDate: DateTime.now(),
+                                              description: '',
+                                              medida: '',
+                                              product: '',
+                                              quantity: 0,
+                                              unitPrice: 0.0,
+                                            ),
+                                          );
+                                          selectedItems.add(selectedItem);
+
+                                          if (selectedItem.id != -1) {
+                                            // Se encontró un elemento correspondiente al nombre seleccionado
+                                            sumaTotal +=
+                                                selectedItem.unitPrice *
+                                                    selectedItem.quantity;
+                                          } else {
+                                            // Manejar el caso en el que no se encontró el elemento correspondiente al nombre seleccionado
+                                            print(
+                                                'No se encontró un elemento correspondiente al nombre seleccionado');
+                                          }
+                                        }
+
+                                        print(
+                                            'Has seleccionado $selectedInventario');
+                                        print('Suma total: $sumaTotal');
                                       },
-                                      items: inventario.map((item) {
-                                        return DropdownMenuItem<int>(
-                                          value: item.id,
-                                          child: Text(item
-                                              .product), // Assuming there's a property "product" in the inventario object
-                                        );
-                                      }).toList(),
-                                      hint: Text(
-                                          'Select Inventario'), // Shown when no item is selected
+                                      whenEmpty: 'Seleccionar insumos',
                                     ),
+                                    //Agregar nuevo select
                                   ],
                                 ),
                                 actions: [
@@ -115,14 +155,14 @@ class CostosDataSource extends DataTableSource {
                                   ElevatedButton(
                                     onPressed: () async {
                                       // Validar cantidad y precio
-                              
+
                                       final manoO = double.tryParse(
                                           manoObraController.text);
                                       final combustible = double.tryParse(
                                           combustibleController.text);
                                       final description =
                                           descriptionController.text;
-                              
+
                                       // ignore: unnecessary_null_comparison
                                       if (description == null ||
                                           description == "") {
@@ -136,22 +176,28 @@ class CostosDataSource extends DataTableSource {
                                           combustible <= 0) {
                                         NotificationsService.showSnackBarError(
                                             'Cantidades inválidos');
+
+                                        if (sumaTotal == 0) {
+                                          NotificationsService.showSnackBarError(
+                                              'Seleccione almenos un insumo');
+                                          return;
+                                        }
                                         return;
                                       }
-                              
+
                                       // Actualizar el inventario
                                       //  inventario.product = productoController.text;
                                       // inventario.purchaseDate = DateFormat.yMd().parse(fechaController.text);
                                       //inventario.quantity = cantidad;
                                       //inventario.unitPrice = precio;
-                              
+
                                       // Guardar cambios
                                       final total = manoO + combustible;
                                       await usersProvider.putUpdateCostos(
                                           description,
                                           manoO,
                                           combustible,
-                                          selectedInventarioId!,
+                                          sumaTotal,
                                           total,
                                           costo.id);
                                       NotificationsService.showSnackBar(
@@ -188,7 +234,7 @@ class CostosDataSource extends DataTableSource {
                                   listen: false);
                               await usersProvider.deleteCostos(costo.id);
 
-                               Navigator.pop(context);
+                              Navigator.pop(context);
                             },
                             child: const Text('Eliminar')),
                       ],

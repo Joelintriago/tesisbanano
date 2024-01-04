@@ -1,6 +1,7 @@
-
+import 'package:admin_dashboard/models/inventario.dart';
 import 'package:admin_dashboard/ui/buttons/custom_icon_button.dart';
 import 'package:flutter/material.dart';
+import 'package:multiselect/multiselect.dart';
 
 import 'package:provider/provider.dart';
 import 'package:admin_dashboard/providers/users_provider.dart';
@@ -32,7 +33,16 @@ class _CostosViewState extends State<CostosView> {
 
   @override
   Widget build(BuildContext context) {
+    final Inventario objetoInventario;
     final usersProvider = Provider.of<UsersProvider>(context);
+
+    List<String> inventarioNombres =
+        usersProvider.inventario.map((item) => item.product).toList();
+    List<Inventario> invent = usersProvider.inventario.toList();
+    List<String> selectedInventario = [];
+    List<Inventario> selectedItems = [];
+    double sumaTotal = 0.0;
+
     final costos = usersProvider.costos;
     final inventario = usersProvider.inventario;
     final planeacion = usersProvider.parametrizacion;
@@ -95,22 +105,52 @@ class _CostosViewState extends State<CostosView> {
                                             hintText: '\$'),
                                         keyboardType: TextInputType.number,
                                       ),
-                                      DropdownButton<int>(
-                                        value: selectedInventarioId,
-                                        onChanged: (newValue) {
+                                      DropDownMultiSelect(
+                                        options: inventarioNombres,
+                                        selectedValues: selectedInventario,
+                                        onChanged: (value) {
                                           setState(() {
-                                            selectedInventarioId = newValue;
+                                            selectedInventario = value.cast<
+                                                String>(); // Actualiza la lista de nombres seleccionados
                                           });
+
+                                          selectedItems.clear();
+                                          sumaTotal =
+                                              0.0; // Reinicia la suma total al cambiar la selección
+
+                                          for (var name in value) {
+                                            Inventario selectedItem =
+                                                invent.firstWhere(
+                                              (item) => item.product == name,
+                                              orElse: () => Inventario(
+                                                id: -1,
+                                                codigo: '',
+                                                purchaseDate: DateTime.now(),
+                                                description: '',
+                                                medida: '',
+                                                product: '',
+                                                quantity: 0,
+                                                unitPrice: 0.0,
+                                              ),
+                                            );
+                                            selectedItems.add(selectedItem);
+
+                                            if (selectedItem.id != -1) {
+                                              // Se encontró un elemento correspondiente al nombre seleccionado
+                                              sumaTotal +=
+                                                  selectedItem.unitPrice * selectedItem.quantity;
+                                            } else {
+                                              // Manejar el caso en el que no se encontró el elemento correspondiente al nombre seleccionado
+                                              print(
+                                                  'No se encontró un elemento correspondiente al nombre seleccionado');
+                                            }
+                                          }
+
+                                          print(
+                                              'Has seleccionado $selectedInventario');
+                                          print('Suma total: $sumaTotal');
                                         },
-                                        items: inventario.map((item) {
-                                          return DropdownMenuItem<int>(
-                                            value: item.id,
-                                            child: Text(item
-                                                .product), // Assuming there's a property "product" in the inventario object
-                                          );
-                                        }).toList(),
-                                        hint: const Text(
-                                            'Select Inventario'), // Shown when no item is selected
+                                        whenEmpty: 'Seleccionar insumos',
                                       ),
                                     ],
                                   ),
@@ -124,7 +164,11 @@ class _CostosViewState extends State<CostosView> {
                                   ),
                                   ElevatedButton(
                                     onPressed: () async {
-                                      // Validar cantidad y precio
+                                      invent.forEach((element) {
+                                        print(
+                                            'Cantidad: ${element.quantity}, Precio: ${element.unitPrice}');
+                                        // Puedes hacer lo que necesites con los datos, como mostrarlos en una interfaz de usuario
+                                      });
 
                                       final manoO = double.tryParse(
                                           manoObraController.text);
@@ -148,6 +192,10 @@ class _CostosViewState extends State<CostosView> {
                                             'Cantidades inválidos');
                                         return;
                                       }
+                                      if(sumaTotal == 0){
+                                        NotificationsService.showSnackBarError('Seleccione almenos un insumo');
+                                        return;
+                                      }
 
                                       // Actualizar el inventario
                                       //  inventario.product = productoController.text;
@@ -161,7 +209,7 @@ class _CostosViewState extends State<CostosView> {
                                           description,
                                           manoO,
                                           combustible,
-                                          selectedInventarioId!,
+                                          sumaTotal,
                                           total);
                                       // NotificationsService.showSnackbar('Producto agregado al inventario');
                                       Navigator.pop(context);
@@ -194,7 +242,6 @@ class _CostosViewState extends State<CostosView> {
                   DataColumn(tooltip: "Insumo", label: Text('Insumo')),
                   DataColumn(
                       tooltip: "Combustible", label: Text('Combustible')),
-                  DataColumn(tooltip: "Inventario", label: Text('Inventario')),
                   DataColumn(tooltip: "Fecha", label: Text('Fecha')),
                   DataColumn(tooltip: "Total", label: Text('Total')),
 

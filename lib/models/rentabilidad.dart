@@ -94,7 +94,7 @@ class CostRecord {
     required this.labor,
     required this.fuel,
     required this.totalCosts,
-    required this.inventoryId,
+    //required this.inventoryId,
     required this.operationalUserId,
   });
 
@@ -105,7 +105,7 @@ class CostRecord {
   int labor;
   int fuel;
   int totalCosts;
-  int inventoryId;
+  //int inventoryId;
   int operationalUserId;
 
   factory CostRecord.fromMap(Map<String, dynamic> json) => CostRecord(
@@ -116,7 +116,7 @@ class CostRecord {
         labor: json["labor"],
         fuel: json["fuel"],
         totalCosts: json["totalCosts"],
-        inventoryId: json["inventoryId"],
+        //inventoryId: json["inventoryId"],
         operationalUserId: json["operationalUserId"],
       );
 
@@ -128,7 +128,7 @@ class CostRecord {
         "labor": labor,
         "fuel": fuel,
         "totalCosts": totalCosts,
-        "inventoryId": inventoryId,
+        //"inventoryId": inventoryId,
         "operationalUserId": operationalUserId,
       };
 }

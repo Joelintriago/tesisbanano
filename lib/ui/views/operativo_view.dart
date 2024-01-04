@@ -18,7 +18,7 @@ class OperativoView extends StatelessWidget {
                   width: MediaQuery.of(context).size.width,
                   color: Colors.white, // Fondo blanco
                   child: const Center(
-                    child: Text('Inventario', style: TextStyle(fontSize: 16)),
+                    child: Text('Insumos', style: TextStyle(fontSize: 16)),
                   ),
                 ),
               ),

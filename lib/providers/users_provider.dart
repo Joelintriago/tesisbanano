@@ -77,9 +77,6 @@ class UsersProvider extends ChangeNotifier {
         // Utiliza la lista de usuarios según tus necesidades
         usuarios.forEach((usuario) {
           users.add(usuario);
-          print('Nombre: ${usuario.firstName}');
-          print('Correo: ${usuario.email}');
-          print('---');
         });
       }
     }
@@ -174,14 +171,14 @@ class UsersProvider extends ChangeNotifier {
 
       if (response.statusCode == 200) {
         NotificationsService.showSnackBar('Usuario actualizado');
-      }else{
+      } else {
         NotificationsService.showSnackBarError('Error al actualizar');
       }
 
       getPaginatedUsers();
       isLoading = false;
       notifyListeners();
-    }else{
+    } else {
       NotificationsService.showSnackBarError('Campos incorrectos');
     }
   }
@@ -458,8 +455,6 @@ class UsersProvider extends ChangeNotifier {
         // Utiliza la lista de usuarios según tus necesidades
         parametrizaciones.forEach((parametrizacion) {
           this.parametrizacion.add(parametrizacion);
-          print('Nombre: ${parametrizacion.id}');
-          print('Correo: ${parametrizacion.climaticCondition}');
         });
       }
     }
@@ -617,25 +612,19 @@ class UsersProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> putUpdateCostos(
-    String descripcion,
-    double manoO,
-    double combustible,
-    int inventario,
-    double total,
-    int id,
-  ) async {
+  Future<void> putUpdateCostos(String descripcion, double manoO,
+      double combustible, double sumaTotal, double total, int id) async {
     final url = 'http://localhost:4000/v1/cost-records/$id';
     final token = LocalStorage.prefs.getString('token') ?? '';
-    final double? insumo = await this.getInventarioXid(inventario);
-    double tInsumo = insumo! + total;
+    final double insumo = sumaTotal;
+    double tInsumo = insumo + total;
+
     final data = {
       "description": descripcion,
       "input": insumo,
       "labor": manoO,
       "fuel": combustible,
       "totalCosts": tInsumo,
-      "inventoryId": inventario,
     };
 
     final headers = {
@@ -724,20 +713,19 @@ class UsersProvider extends ChangeNotifier {
     String descripcion,
     double manoO,
     double combustible,
-    int inventario,
+    double sumaTotal,
     double total,
   ) async {
     final url = 'http://localhost:4000/v1/cost-records';
     final token = LocalStorage.prefs.getString('token') ?? '';
-    final double? insumo = await this.getInventarioXid(inventario);
-    double tInsumo = insumo! + total;
+    final double insumo = sumaTotal;
+    double tInsumo = insumo + total;
     final data = {
       "description": descripcion,
       "input": insumo,
       "labor": manoO,
       "fuel": combustible,
       "totalCosts": tInsumo,
-      "inventoryId": inventario,
     };
 
     final headers = {
@@ -800,8 +788,10 @@ class UsersProvider extends ChangeNotifier {
   }
 
   Future<void> putUpdateInventario(
+    String codigo,
     String producto,
     String descripcion,
+    String medida,
     String fecha,
     double precio,
     int cantidad,
@@ -811,8 +801,10 @@ class UsersProvider extends ChangeNotifier {
     final token = LocalStorage.prefs.getString('token') ?? '';
 
     final data = {
+      'codigo': codigo,
       'purchaseDate': fecha,
       'description': descripcion,
+      'medida': medida,
       'product': producto,
       'unitPrice': precio,
       'quantity': cantidad,
@@ -864,8 +856,10 @@ class UsersProvider extends ChangeNotifier {
   }
 
   Future<void> postCreateInventario(
+    String codigo,
     String producto,
     String descripcion,
+    String medida,
     String fecha,
     double precio,
     int cantidad,
@@ -874,8 +868,10 @@ class UsersProvider extends ChangeNotifier {
     final token = LocalStorage.prefs.getString('token') ?? '';
 
     final data = {
+      'codigo': codigo,
       'purchaseDate': fecha,
       'description': descripcion,
+      'medida': medida,
       'product': producto,
       'unitPrice': precio,
       'quantity': cantidad,
@@ -898,8 +894,7 @@ class UsersProvider extends ChangeNotifier {
       notifyListeners();
       NotificationsService.showSnackBar('Producto agregado al inventario');
     } else {
-      NotificationsService.showSnackBarError(
-          'Existen registros de costos con este inventario.');
+      NotificationsService.showSnackBarError('No se pudo crear el insumo.');
     }
   }
 
@@ -916,10 +911,12 @@ class UsersProvider extends ChangeNotifier {
       'Content-Type': 'application/json',
     };
 
+    print('Entre a la función rentabilidad');
     final response = await http.get(Uri.parse(url), headers: headers);
 
     if (response.statusCode == 200) {
       final responseBody = response.body;
+      print('Body: $responseBody');
       final parsedResponse = json.decode(responseBody);
       if (parsedResponse.containsKey('data')) {
         final List<dynamic> data = parsedResponse['data'];

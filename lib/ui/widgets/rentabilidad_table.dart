@@ -14,46 +14,34 @@ class RentabilidadView extends StatefulWidget {
 }
 
 class _RentabilidadViewState extends State<RentabilidadView> {
-  int c=0;
-      int? selectedCostosId;
-int? selectedPlaneacionId;
+  int c = 0;
+  int? selectedCostosId;
+  int? selectedPlaneacionId;
 
-int? selectedCostosID;
+  int? selectedCostosID;
   @override
-@override
-void didChangeDependencies() {
-  if(c==0){
-     super.didChangeDependencies();
-  Provider.of<UsersProvider>(context).getRentabilidad();
-   Provider.of<UsersProvider>(context).getInventario();
-   Provider.of<UsersProvider>(context).getSiembra();
-   Provider.of<UsersProvider>(context).getCostos();
-  c++;
+  @override
+  void didChangeDependencies() {
+    if (c == 0) {
+      super.didChangeDependencies();
+      Provider.of<UsersProvider>(context).getRentabilidad();
+      Provider.of<UsersProvider>(context).getInventario();
+      Provider.of<UsersProvider>(context).getSiembra();
+      Provider.of<UsersProvider>(context).getCostos();
+      c++;
+    }
   }
- 
-}
-
-
 
   @override
   Widget build(BuildContext context) {
     final usersProvider = Provider.of<UsersProvider>(context);
     //final costos = usersProvider.costos;
     final rentabilidad = usersProvider.rentabilidad;
-   
+
     final planeacion = usersProvider.parametrizacion;
     final costos = usersProvider.costos;
-    final usersDataSource = new RentabilidadDataSource(rentabilidad,this.context,costos,planeacion,false);
-
-
-
-
-
-
-
-
-
-
+    final usersDataSource = RentabilidadDataSource(
+        rentabilidad, this.context, costos, planeacion, false);
 
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
@@ -63,12 +51,9 @@ void didChangeDependencies() {
           physics: ClampingScrollPhysics(),
           children: [
             SizedBox(height: 10),
-      
             Padding(
               padding: const EdgeInsets.all(15.0),
               child: PaginatedDataTable(
-                 
-
                 actions: [
                   IconButton(
                     icon: Icon(Icons.add, color: Colors.blue),
@@ -88,10 +73,6 @@ void didChangeDependencies() {
                                   child: Column(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                  
-                                        
-
-                                   
                                       DropdownButton<int>(
                                         value: selectedPlaneacionId,
                                         onChanged: (newValue) {
@@ -179,13 +160,11 @@ void didChangeDependencies() {
                 )),
                 headingRowHeight: 100,
                 columnSpacing: 5,
-                  
-                columns: const[
+                columns: const [
                   //DataColumn(label: Text('Id')),
-                 
-                  DataColumn(tooltip: "Id",
-                    label: Text('Id')),
-                   DataColumn(tooltip: "Número de lote",
+
+                  DataColumn(tooltip: "Id", label: Text('Id')),
+                  DataColumn(tooltip: "Número de lote",
                     label: Text('Núm. lote')),
                       DataColumn(tooltip: "Número Racimos aceptados",
                     label: Text('Núm. Racimos enfundados')),
@@ -201,9 +180,7 @@ void didChangeDependencies() {
                   DataColumn(label: Text('Acciones')),
                 ],
                 source: usersDataSource,
-                onPageChanged: (page) {
-               
-                },
+                onPageChanged: (page) {},
               ),
             )
           ],

@@ -272,13 +272,6 @@ void generateAndDownloadPdfRentCosto(
           pw.Container(
             color: PdfColors.green300,
             alignment: pw.Alignment.center,
-            child: pw.Text('Inventario id',
-                style:
-                    pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold)),
-          ),
-          pw.Container(
-            color: PdfColors.green300,
-            alignment: pw.Alignment.center,
             child: pw.Text('Combustible',
                 style:
                     pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold)),
@@ -300,10 +293,11 @@ void generateAndDownloadPdfRentCosto(
           pw.Container(
             color: PdfColors.green300,
             alignment: pw.Alignment.center,
-            child: pw.Text('total',
+            child: pw.Text('Total',
                 style:
                     pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold)),
           ),
+
         ],
       ),
       ...costos.map((costo) {
@@ -333,14 +327,14 @@ void generateAndDownloadPdfRentCosto(
                 style: pw.TextStyle(fontSize: 10),
               ),
             ),
-            pw.Container(
+            /*pw.Container(
               color: PdfColors.green100,
               alignment: pw.Alignment.center,
               child: pw.Text(
                 costo.inventoryId.toString(),
                 style: pw.TextStyle(fontSize: 10),
               ),
-            ),
+            ),*/
             pw.Container(
               color: PdfColors.green100,
               alignment: pw.Alignment.center,

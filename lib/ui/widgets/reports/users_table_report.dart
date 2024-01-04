@@ -83,11 +83,8 @@ class _UsersTableReportState extends State<UsersTableReport> {
                   usersProvider.sort<String>((user) => user.lastName);
                 }),
             DataColumn(
-                label: Text('Email'),
-                onSort: (colIndex, _) {
-                  usersProvider.sortColumnIndex = colIndex;
-                  usersProvider.sort<String>((user) => user.email);
-                }),
+              label: Text('Email'),
+            ),
             DataColumn(label: Text('Rol')),
             DataColumn(label: Text('Estado')),
           ],
@@ -96,24 +93,25 @@ class _UsersTableReportState extends State<UsersTableReport> {
             print('page: $page');
           },
         ),
-
-        const SizedBox(height: 15,),
+        const SizedBox(
+          height: 15,
+        ),
         PaginatedDataTable(
-             sortAscending: usersProvider.ascending,
-                  sortColumnIndex: usersProvider.sortColumnIndex,
-                  header: const Center(
-                      child: Text(
-                    "Permisos",
-                    style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-                  )),
-                  headingRowHeight: 100,
-                  columns: const[
-                    DataColumn(label: Text('Id')),
-                    DataColumn(label: Text('Descripción')),
-                    DataColumn(label: Text('Permiso')),
-                  ],
-                  source: permisoDataSource,
-                  onPageChanged: (page) {},
+          sortAscending: usersProvider.ascending,
+          sortColumnIndex: usersProvider.sortColumnIndex,
+          header: const Center(
+              child: Text(
+            "Permisos",
+            style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+          )),
+          headingRowHeight: 100,
+          columns: const [
+            DataColumn(label: Text('Id')),
+            DataColumn(label: Text('Descripción')),
+            DataColumn(label: Text('Permiso')),
+          ],
+          source: permisoDataSource,
+          onPageChanged: (page) {},
         )
       ],
     );

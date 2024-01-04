@@ -117,13 +117,14 @@ class _UsersViewState extends State<UsersView> {
                                 onSort: (ColIndex, _) {
                                   usersProvider.sortColumnIndex = ColIndex;
                                   usersProvider
-                                      .sort<String>((user) => user.email);
+                                      .sort<String>((user) => user.firstName);
                                 },
                               ),
                               const DataColumn(label: Text('Apellido')),
                               DataColumn(
                                 label: const Text('Email'),
                                 onSort: (colIndex, _) {
+                                  print('Col index ${colIndex}');
                                   usersProvider.sortColumnIndex = colIndex;
                                   usersProvider
                                       .sort<String>((user) => user.email);

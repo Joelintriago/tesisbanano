@@ -28,7 +28,8 @@ class _InvetoryTableReportState extends State<InvetoryTableReport> {
   int c = 0;
   final TextEditingController inventoryDateController = TextEditingController();
   DateTime? selectedStartDate;
-  final TextEditingController inventoryDateEndController = TextEditingController();
+  final TextEditingController inventoryDateEndController =
+      TextEditingController();
   /*TextEditingController initialDateController = TextEditingController();
   TextEditingController finalDateController = TextEditingController();*/
   late UsersProvider usersProvider; // Declaración de usersProvider
@@ -39,7 +40,7 @@ class _InvetoryTableReportState extends State<InvetoryTableReport> {
     usersProvider = Provider.of<UsersProvider>(context, listen: false);
   }
 
-    void filtrarPorRangoFechas(String initialDateText, String finalDateText) {
+  void filtrarPorRangoFechas(String initialDateText, String finalDateText) {
     try {
       // Parsear las fechas utilizando el formato 'MM/d/yyyy' (mes/día/año)
       DateTime fechaInicioSeleccionada =
@@ -52,8 +53,12 @@ class _InvetoryTableReportState extends State<InvetoryTableReport> {
       // Filtrar los datos según el rango de fechas
       List<Inventario> datosFiltrados =
           usersProvider.inventario.where((element) {
-        return (element.purchaseDate.isAtSameMomentAs(fechaInicioSeleccionada) || element.purchaseDate.isAfter(fechaInicioSeleccionada))
-        && (element.purchaseDate.isAtSameMomentAs(fechaFinSeleccionada)|| element.purchaseDate.isBefore(fechaFinSeleccionada));
+        print(element.purchaseDate);
+        return (element.purchaseDate
+                    .isAtSameMomentAs(fechaInicioSeleccionada) ||
+                element.purchaseDate.isAfter(fechaInicioSeleccionada)) &&
+            (element.purchaseDate.isAtSameMomentAs(fechaFinSeleccionada) ||
+                element.purchaseDate.isBefore(fechaFinSeleccionada));
       }).toList();
 
       // Notificar a los widgets que los datos han cambiado
@@ -135,7 +140,8 @@ class _InvetoryTableReportState extends State<InvetoryTableReport> {
                           inventoryDateController.text =
                               DateFormat.yMd().format(selectedDate);
                           selectedStartDate = selectedDate;
-
+                          filtrarPorRangoFechas(inventoryDateController.text,
+                              inventoryDateEndController.text);
                         });
                       }
                     });
@@ -173,10 +179,8 @@ class _InvetoryTableReportState extends State<InvetoryTableReport> {
                         setState(() {
                           inventoryDateEndController.text =
                               DateFormat.yMd().format(selectedDate);
-                          filtrarPorRangoFechas(
-                            inventoryDateController.text,
-                            inventoryDateEndController.text
-                          );
+                          filtrarPorRangoFechas(inventoryDateController.text,
+                              inventoryDateEndController.text);
                         });
                       }
                     });
@@ -193,14 +197,16 @@ class _InvetoryTableReportState extends State<InvetoryTableReport> {
             sortColumnIndex: usersProvider.sortColumnIndex,
             header: const Center(
                 child: Text(
-              "Inventario",
+              "Insumos",
               style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
             )),
             headingRowHeight: 100,
             columns: const [
               DataColumn(label: Text('Id')),
-              DataColumn(label: Text('Descripcion')),
+              DataColumn(label: Text('Codigo')),
               DataColumn(label: Text('Producto')),
+              DataColumn(label: Text('Descripción')),
+              DataColumn(label: Text('Unidad/Medida')),
               DataColumn(label: Text('Fecha de compra')),
               DataColumn(label: Text('Cantidad')),
               DataColumn(label: Text('Precio')),
@@ -423,14 +429,14 @@ void generateAndDownloadPdfInventario(
                 style: pw.TextStyle(fontSize: 10),
               ),
             ),
-            pw.Container(
+            /*pw.Container(
               color: PdfColors.green100,
               alignment: pw.Alignment.center,
               child: pw.Text(
                 costo.inventoryId.toString(),
                 style: pw.TextStyle(fontSize: 10),
               ),
-            ),
+            ),*/
             pw.Container(
               color: PdfColors.green100,
               alignment: pw.Alignment.center,
@@ -484,17 +490,12 @@ void generateAndDownloadPdfInventario(
       },
       build: (pw.Context context) {
         return [
-          pw.Text('Tabla de Inventario',
+          pw.Text('Tabla de Insumos',
               style:
                   pw.TextStyle(fontSize: 15, fontWeight: pw.FontWeight.bold)),
           pw.SizedBox(height: 10),
           permisosTable,
           pw.SizedBox(height: 20),
-          pw.Text('Tabla de Costos',
-              style:
-                  pw.TextStyle(fontSize: 15, fontWeight: pw.FontWeight.bold)),
-          pw.SizedBox(height: 10),
-          usuariosTable,
         ];
       },
     ),
@@ -516,3 +517,5 @@ void generateAndDownloadPdfInventario(
   html.document.body?.children.remove(anchor);
   html.Url.revokeObjectUrl(url);
 }
+
+

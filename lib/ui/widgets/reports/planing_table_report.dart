@@ -54,10 +54,8 @@ class _PlaningTableReportState extends State<PlaningTableReport> {
       // Filtrar los datos según el rango de fechas
       List<Parametrizacion> datosFiltrados =
           usersProvider.parametrizacion.where((element) {
-        return element.sowingDate.isAtSameMomentAs(fechaInicioSeleccionada) ||
-            (element.sowingDate.isAfter(fechaInicioSeleccionada) &&
-                element.sowingDateEnd.isBefore(fechaFinSeleccionada)) ||
-            element.sowingDateEnd.isAtSameMomentAs(fechaFinSeleccionada);
+        return (element.sowingDate.isAtSameMomentAs(fechaInicioSeleccionada) || element.sowingDate.isAfter(fechaInicioSeleccionada))
+        && (element.sowingDateEnd.isAtSameMomentAs(fechaFinSeleccionada) || element.sowingDateEnd.isBefore(fechaFinSeleccionada));
       }).toList();
 
       // Notificar a los widgets que los datos han cambiado
