@@ -1,6 +1,7 @@
 import 'package:admin_dashboard/models/inventario.dart';
 import 'package:admin_dashboard/ui/buttons/custom_icon_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:multiselect/multiselect.dart';
 
 import 'package:provider/provider.dart';
@@ -92,18 +93,28 @@ class _CostosViewState extends State<CostosView> {
                                             labelText: 'Descripción'),
                                       ),
                                       TextField(
+                                        inputFormatters: <TextInputFormatter>[
+                                          FilteringTextInputFormatter.allow(RegExp(
+                                              r'^\d+[\.]?\d{0,2}')), // Permite números decimales con punto o coma como separador
+                                        ],
                                         controller: manoObraController,
                                         decoration: const InputDecoration(
                                             labelText: 'Costo mano de obra',
                                             hintText: '\$'),
-                                        keyboardType: TextInputType.number,
+                                        keyboardType: const TextInputType
+                                            .numberWithOptions(decimal: true),
                                       ),
                                       TextField(
+                                        inputFormatters: <TextInputFormatter>[
+                                          FilteringTextInputFormatter.allow(RegExp(
+                                              r'^\d+[\.]?\d{0,2}')), // Permite números decimales con punto o coma como separador
+                                        ],
                                         controller: combustibleController,
                                         decoration: const InputDecoration(
                                             labelText: 'Costo Combustible',
                                             hintText: '\$'),
-                                        keyboardType: TextInputType.number,
+                                        keyboardType: const TextInputType
+                                            .numberWithOptions(decimal: true),
                                       ),
                                       DropDownMultiSelect(
                                         options: inventarioNombres,
@@ -138,7 +149,8 @@ class _CostosViewState extends State<CostosView> {
                                             if (selectedItem.id != -1) {
                                               // Se encontró un elemento correspondiente al nombre seleccionado
                                               sumaTotal +=
-                                                  selectedItem.unitPrice * selectedItem.quantity;
+                                                  selectedItem.unitPrice *
+                                                      selectedItem.quantity;
                                             } else {
                                               // Manejar el caso en el que no se encontró el elemento correspondiente al nombre seleccionado
                                               print(
@@ -192,8 +204,9 @@ class _CostosViewState extends State<CostosView> {
                                             'Cantidades inválidos');
                                         return;
                                       }
-                                      if(sumaTotal == 0){
-                                        NotificationsService.showSnackBarError('Seleccione almenos un insumo');
+                                      if (sumaTotal == 0) {
+                                        NotificationsService.showSnackBarError(
+                                            'Seleccione almenos un insumo');
                                         return;
                                       }
 

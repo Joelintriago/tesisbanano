@@ -104,7 +104,7 @@ class CostRecord {
   int input;
   int labor;
   int fuel;
-  int totalCosts;
+  double totalCosts;
   //int inventoryId;
   int operationalUserId;
 

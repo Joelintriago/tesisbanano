@@ -54,8 +54,10 @@ class _PlaningTableReportState extends State<PlaningTableReport> {
       // Filtrar los datos según el rango de fechas
       List<Parametrizacion> datosFiltrados =
           usersProvider.parametrizacion.where((element) {
-        return (element.sowingDate.isAtSameMomentAs(fechaInicioSeleccionada) || element.sowingDate.isAfter(fechaInicioSeleccionada))
-        && (element.sowingDateEnd.isAtSameMomentAs(fechaFinSeleccionada) || element.sowingDateEnd.isBefore(fechaFinSeleccionada));
+        return (element.sowingDate.isAtSameMomentAs(fechaInicioSeleccionada) ||
+                element.sowingDate.isAfter(fechaInicioSeleccionada)) &&
+            (element.sowingDateEnd.isAtSameMomentAs(fechaFinSeleccionada) ||
+                element.sowingDateEnd.isBefore(fechaFinSeleccionada));
       }).toList();
 
       // Notificar a los widgets que los datos han cambiado
@@ -328,114 +330,115 @@ void generateAndDownloadPdfSiembra(
     children: [
       pw.TableRow(
         children: [
-          pw.Container(
-            color: PdfColors.green300,
+          /*pw.Container(
             alignment: pw.Alignment.center,
-            child: pw.Text('ID',
-                style:
-                    pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold)),
+            child: pw.Text(
+              'ID',
+              style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold),
+            ),
+          ),*/
+          pw.Container(
+            alignment: pw.Alignment.center,
+            child: pw.Text(
+              'Condición climatica',
+              style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold),
+              textAlign: pw.TextAlign.center,
+            ),
           ),
           pw.Container(
-            color: PdfColors.green300,
-            alignment: pw.Alignment.center,
-            child: pw.Text('Condición climatica',
-                style:
-                    pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold)),
-          ),
-          pw.Container(
-            color: PdfColors.green300,
             alignment: pw.Alignment.center,
             child: pw.Text('Variación del Banano',
                 style:
-                    pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold)),
+                    pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold),
+                     textAlign: pw.TextAlign.center,),
           ),
           pw.Container(
-            color: PdfColors.green300,
             alignment: pw.Alignment.center,
             child: pw.Text('Cantidad de semillas',
                 style:
-                    pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold)),
+                    pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold),
+                     textAlign: pw.TextAlign.center,),
           ),
           pw.Container(
-            color: PdfColors.green300,
             alignment: pw.Alignment.center,
             child: pw.Text('Cantidad de pesticida',
                 style:
-                    pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold)),
+                    pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold),
+                     textAlign: pw.TextAlign.center,),
           ),
           pw.Container(
-            color: PdfColors.green300,
             alignment: pw.Alignment.center,
             child: pw.Text('Cantidad de fertilizante',
                 style:
-                    pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold)),
+                    pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold),
+                     textAlign: pw.TextAlign.center,),
           ),
           pw.Container(
-            color: PdfColors.green300,
             alignment: pw.Alignment.center,
             child: pw.Text('Fecha fumigación',
                 style:
-                    pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold)),
+                    pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold),
+                     textAlign: pw.TextAlign.center,),
           ),
           pw.Container(
-            color: PdfColors.green300,
             alignment: pw.Alignment.center,
-            child: pw.Text('Riego',
-                style:
-                    pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold)),
+            child: pw.Text(
+              'Riego',
+              style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold),
+              textAlign: pw.TextAlign.center,
+            ),
           ),
         ],
       ),
       ...parametrizacion.map((parametrizaci) {
         return pw.TableRow(
           children: [
-            pw.Container(
-              color: PdfColors.green100,
+            /*pw.Container(
               alignment: pw.Alignment.center,
               child: pw.Text(parametrizaci.id.toString(),
                   style: pw.TextStyle(fontSize: 10)),
-            ),
+            ),*/
             pw.Container(
-              color: PdfColors.green100,
               alignment: pw.Alignment.center,
               child: pw.Text(parametrizaci.climaticCondition,
-                  style: pw.TextStyle(fontSize: 10)),
+                  style: pw.TextStyle(fontSize: 10),
+                  textAlign: pw.TextAlign.center,),
             ),
             pw.Container(
-              color: PdfColors.green100,
               alignment: pw.Alignment.center,
               child: pw.Text(parametrizaci.bananaVariety,
-                  style: pw.TextStyle(fontSize: 10)),
+                  style: pw.TextStyle(fontSize: 10),
+                  textAlign: pw.TextAlign.center,),
             ),
             pw.Container(
-              color: PdfColors.green100,
               alignment: pw.Alignment.center,
               child: pw.Text(parametrizaci.seedName.toString(),
-                  style: pw.TextStyle(fontSize: 10)),
+                  style: pw.TextStyle(fontSize: 10),
+                  textAlign: pw.TextAlign.center,),
             ),
             pw.Container(
-              color: PdfColors.green100,
               alignment: pw.Alignment.center,
               child: pw.Text(parametrizaci.pesticideQuantityKG.toString(),
-                  style: pw.TextStyle(fontSize: 10)),
+                  style: pw.TextStyle(fontSize: 10),
+                  textAlign: pw.TextAlign.center,),
             ),
             pw.Container(
-              color: PdfColors.green100,
               alignment: pw.Alignment.center,
               child: pw.Text(parametrizaci.fertilizerQuantityKG.toString(),
-                  style: pw.TextStyle(fontSize: 10)),
+                  style: pw.TextStyle(fontSize: 10),
+                  textAlign: pw.TextAlign.center,),
             ),
             pw.Container(
-              color: PdfColors.green100,
               alignment: pw.Alignment.center,
               child: pw.Text(parametrizaci.fumigationDate.toString(),
-                  style: pw.TextStyle(fontSize: 10)),
+                  style: pw.TextStyle(fontSize: 10),
+                  textAlign: pw.TextAlign.center,),
             ),
             pw.Container(
-              color: PdfColors.green100,
               alignment: pw.Alignment.center,
               child: pw.Text(parametrizaci.irrigation.toString(),
-                  style: pw.TextStyle(fontSize: 10)),
+                  style: pw.TextStyle(fontSize: 10),
+                  textAlign: pw.TextAlign.center,),
             ),
           ],
         );
@@ -450,60 +453,60 @@ void generateAndDownloadPdfSiembra(
       pw.TableRow(
         children: [
           pw.Container(
-            color: PdfColors.green300,
             alignment: pw.Alignment.center,
             child: pw.Text('Fecha Inicio',
                 style:
-                    pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold)),
+                    pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold),
+                    textAlign: pw.TextAlign.center,),
           ),
           pw.Container(
-            color: PdfColors.green300,
             alignment: pw.Alignment.center,
             child: pw.Text('Fecha fin',
                 style:
-                    pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold)),
+                    pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold),
+                    textAlign: pw.TextAlign.center,),
           ),
           pw.Container(
-            color: PdfColors.green300,
             alignment: pw.Alignment.center,
             child: pw.Text('Tiempo estimado',
                 style:
-                    pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold)),
+                    pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold),
+                    textAlign: pw.TextAlign.center,),
           ),
           pw.Container(
-            color: PdfColors.green300,
             alignment: pw.Alignment.center,
             child: pw.Text('Núm. Racimos ',
                 style:
-                    pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold)),
+                    pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold),
+                    textAlign: pw.TextAlign.center,),
           ),
           pw.Container(
-            color: PdfColors.green300,
             alignment: pw.Alignment.center,
             child: pw.Text('Núm. Rechazados',
                 style:
-                    pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold)),
+                    pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold),
+                    textAlign: pw.TextAlign.center,),
           ),
           pw.Container(
-            color: PdfColors.green300,
             alignment: pw.Alignment.center,
             child: pw.Text('Peso promedio',
                 style:
-                    pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold)),
+                    pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold),
+                    textAlign: pw.TextAlign.center,),
           ),
           pw.Container(
-            color: PdfColors.green300,
             alignment: pw.Alignment.center,
             child: pw.Text('Núm de lote',
                 style:
-                    pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold)),
+                    pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold),
+                    textAlign: pw.TextAlign.center,),
           ),
           pw.Container(
-            color: PdfColors.green300,
             alignment: pw.Alignment.center,
             child: pw.Text('Id parametrización I',
                 style:
-                    pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold)),
+                    pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold),
+                    textAlign: pw.TextAlign.center,),
           ),
         ],
       ),
@@ -511,52 +514,52 @@ void generateAndDownloadPdfSiembra(
         return pw.TableRow(
           children: [
             pw.Container(
-              color: PdfColors.green100,
               alignment: pw.Alignment.center,
               child: pw.Text(parametrizaci.sowingDate.toString(),
-                  style: pw.TextStyle(fontSize: 10)),
+                  style: pw.TextStyle(fontSize: 10),
+                   textAlign: pw.TextAlign.center,),
             ),
             pw.Container(
-              color: PdfColors.green100,
               alignment: pw.Alignment.center,
               child: pw.Text(parametrizaci.sowingDateEnd.toString(),
-                  style: pw.TextStyle(fontSize: 10)),
+                  style: pw.TextStyle(fontSize: 10),
+                   textAlign: pw.TextAlign.center,),
             ),
             pw.Container(
-              color: PdfColors.green100,
               alignment: pw.Alignment.center,
               child: pw.Text(parametrizaci.estimatedSowingTime.toString(),
-                  style: pw.TextStyle(fontSize: 10)),
+                  style: pw.TextStyle(fontSize: 10),
+                   textAlign: pw.TextAlign.center,),
             ),
             pw.Container(
-              color: PdfColors.green100,
               alignment: pw.Alignment.center,
               child: pw.Text(parametrizaci.numberOfBunches.toString(),
-                  style: pw.TextStyle(fontSize: 10)),
+                  style: pw.TextStyle(fontSize: 10),
+                   textAlign: pw.TextAlign.center,),
             ),
             pw.Container(
-              color: PdfColors.green100,
               alignment: pw.Alignment.center,
               child: pw.Text(parametrizaci.rejectedBunches.toString(),
-                  style: pw.TextStyle(fontSize: 10)),
+                  style: pw.TextStyle(fontSize: 10),
+                   textAlign: pw.TextAlign.center,),
             ),
             pw.Container(
-              color: PdfColors.green100,
               alignment: pw.Alignment.center,
               child: pw.Text(parametrizaci.averageBunchWeight.toString(),
-                  style: pw.TextStyle(fontSize: 10)),
+                  style: pw.TextStyle(fontSize: 10),
+                   textAlign: pw.TextAlign.center,),
             ),
             pw.Container(
-              color: PdfColors.green100,
               alignment: pw.Alignment.center,
               child: pw.Text(parametrizaci.batchNumber.toString(),
-                  style: pw.TextStyle(fontSize: 10)),
+                  style: pw.TextStyle(fontSize: 10),
+                   textAlign: pw.TextAlign.center,),
             ),
             pw.Container(
-              color: PdfColors.green100,
               alignment: pw.Alignment.center,
               child: pw.Text(parametrizaci.id.toString(),
-                  style: pw.TextStyle(fontSize: 10)),
+                  style: pw.TextStyle(fontSize: 10),
+                   textAlign: pw.TextAlign.center,),
             ),
           ],
         );

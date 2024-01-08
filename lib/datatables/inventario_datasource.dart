@@ -16,7 +16,7 @@ class InventarioDataSource extends DataTableSource {
   DataRow getRow(int index) {
     final Inventario inventario = inventarios[index];
 
-    List<String> medida = ["LITRO", "GALON","NINGUNO","FUNDAS","SACOS"];
+    List<String> medida = ["LITRO", "GALON", "NINGUNO", "FUNDAS", "SACOS"];
     String selectedMedida = inventario.medida;
 
     final TextEditingController codigoController = TextEditingController();
@@ -70,6 +70,11 @@ class InventarioDataSource extends DataTableSource {
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     TextField(
+                                      inputFormatters: <TextInputFormatter>[
+                                        // for below version 2 use this
+                                        FilteringTextInputFormatter.allow(
+                                            RegExp(r'^[a-zA-Z\s]+$')),
+                                      ],
                                       controller: productoController,
                                       decoration:
                                           InputDecoration(labelText: 'Nombre'),
@@ -137,16 +142,15 @@ class InventarioDataSource extends DataTableSource {
                                     ),
                                     TextField(
                                       inputFormatters: <TextInputFormatter>[
-                                        // for below version 2 use this
-                                        FilteringTextInputFormatter.allow(
-                                            RegExp(r'[0-9]')),
-
-                                        FilteringTextInputFormatter.digitsOnly
+                                        FilteringTextInputFormatter.allow(RegExp(
+                                            r'^\d+[\.]?\d{0,2}')), // Permite números decimales con punto o coma como separador
                                       ],
                                       controller: precioController,
                                       decoration: InputDecoration(
                                           labelText: 'Precio', hintText: '\$'),
-                                      keyboardType: TextInputType.number,
+                                      keyboardType:
+                                          TextInputType.numberWithOptions(
+                                              decimal: true),
                                     ),
                                   ],
                                 ),

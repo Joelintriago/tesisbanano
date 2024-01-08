@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 
 import 'package:admin_dashboard/models/costos.dart';
@@ -83,16 +84,28 @@ class CostosDataSource extends DataTableSource {
                                           labelText: 'Descripción'),
                                     ),
                                     TextField(
+                                       inputFormatters: <TextInputFormatter>[
+                                        FilteringTextInputFormatter.allow(RegExp(
+                                            r'^\d+[\.]?\d{0,2}')), // Permite números decimales con punto o coma como separador
+                                      ],
+                                      keyboardType:
+                                          const TextInputType.numberWithOptions(
+                                              decimal: true),
                                       controller: manoObraController,
                                       decoration: InputDecoration(
                                           labelText: 'Costo mano de obra'),
-                                      keyboardType: TextInputType.number,
                                     ),
                                     TextField(
+                                      inputFormatters: <TextInputFormatter>[
+                                        FilteringTextInputFormatter.allow(RegExp(
+                                            r'^\d+[\.]?\d{0,2}')), // Permite números decimales con punto o coma como separador
+                                      ],
+                                      keyboardType:
+                                          const TextInputType.numberWithOptions(
+                                              decimal: true),
                                       controller: combustibleController,
                                       decoration: InputDecoration(
                                           labelText: 'Costo Combustible'),
-                                      keyboardType: TextInputType.number,
                                     ),
                                     DropDownMultiSelect(
                                       options: inventarioNombres,

@@ -35,7 +35,7 @@ class _InventarioViewState extends State<InventarioView> {
     final usersDataSource =
         new InventarioDataSource(inventario, this.context, false);
 
-    List<String> medida = ["LITRO", "GALON","NINGUNO","FUNDAS","SACOS"];
+    List<String> medida = ["LITRO", "GALON", "NINGUNO", "FUNDAS", "SACOS"];
     String selectedMedida = "LITRO";
 
     final TextEditingController codigoController = TextEditingController();
@@ -77,6 +77,11 @@ class _InventarioViewState extends State<InventarioView> {
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     TextField(
+                                      inputFormatters: <TextInputFormatter>[
+                                        // for below version 2 use this
+                                        FilteringTextInputFormatter.allow(
+                                            RegExp(r'^[a-zA-Z\s]+$')),
+                                      ],
                                       controller: productoController,
                                       decoration:
                                           InputDecoration(labelText: 'Nombre'),
@@ -144,16 +149,18 @@ class _InventarioViewState extends State<InventarioView> {
                                     ),
                                     TextField(
                                       inputFormatters: <TextInputFormatter>[
-                                        // for below version 2 use this
-                                        FilteringTextInputFormatter.allow(
-                                            RegExp(r'[0-9]')),
-
-                                        FilteringTextInputFormatter.digitsOnly
+                                        FilteringTextInputFormatter.allow(RegExp(
+                                            r'^\d+[\.]?\d{0,2}')), // Permite números decimales con punto o coma como separador
                                       ],
                                       controller: precioController,
-                                      decoration: InputDecoration(
-                                          labelText: 'Precio', hintText: '\$'),
-                                      keyboardType: TextInputType.number,
+                                      decoration: const InputDecoration(
+                                        labelText: 'Precio',
+                                        hintText: '\$',
+                                      ),
+                                      keyboardType: const TextInputType
+                                          .numberWithOptions(
+                                          decimal:
+                                              true), // Habilita el teclado numérico con opción decimal
                                     ),
                                   ],
                                 ),
@@ -184,7 +191,7 @@ class _InventarioViewState extends State<InventarioView> {
 
                                           // ignore: unnecessary_null_comparison
                                           codigo == null ||
-                                          codigo == ""||
+                                          codigo == "" ||
                                           // ignore: unnecessary_null_comparison
                                           productdescription == null ||
                                           productdescription == "" ||
