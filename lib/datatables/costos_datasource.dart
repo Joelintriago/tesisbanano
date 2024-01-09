@@ -60,10 +60,10 @@ class CostosDataSource extends DataTableSource {
                 IconButton(
                   icon: Icon(Icons.edit, color: Colors.blue),
                   onPressed: () async {
-                    final usersProvider =
+                    /*final usersProvider =
                         Provider.of<UsersProvider>(context, listen: false);
                     await usersProvider.getRoles();
-                    if (usersProvider.roles.isEmpty) return;
+                    if (usersProvider.roles.isEmpty) return;*/
 
                     // ignore: use_build_context_synchronously
                     showDialog(

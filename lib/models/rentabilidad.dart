@@ -101,9 +101,9 @@ class CostRecord {
   int id;
   DateTime registerDate;
   String description;
-  int input;
-  int labor;
-  int fuel;
+  double input;
+  double labor;
+  double fuel;
   double totalCosts;
   //int inventoryId;
   int operationalUserId;
@@ -112,10 +112,10 @@ class CostRecord {
         id: json["id"],
         registerDate: DateTime.parse(json["registerDate"]),
         description: json["description"],
-        input: json["input"],
-        labor: json["labor"],
-        fuel: json["fuel"],
-        totalCosts: json["totalCosts"],
+        input: json["input"].toDouble(),
+        labor: json["labor"].toDouble(),
+        fuel: json["fuel"].toDouble(),
+        totalCosts: json["totalCosts"].toDouble(),
         //inventoryId: json["inventoryId"],
         operationalUserId: json["operationalUserId"],
       );

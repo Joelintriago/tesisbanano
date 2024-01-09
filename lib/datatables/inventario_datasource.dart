@@ -14,6 +14,8 @@ class InventarioDataSource extends DataTableSource {
 
   @override
   DataRow getRow(int index) {
+    final usersProvider = Provider.of<UsersProvider>(context);
+
     final Inventario inventario = inventarios[index];
 
     List<String> medida = ["LITRO", "GALON", "NINGUNO", "FUNDAS", "SACOS"];
@@ -51,11 +53,6 @@ class InventarioDataSource extends DataTableSource {
                 IconButton(
                   icon: Icon(Icons.edit, color: Colors.blue),
                   onPressed: () async {
-                    final usersProvider =
-                        Provider.of<UsersProvider>(context, listen: false);
-                    await usersProvider.getRoles();
-                    if (usersProvider.roles.isEmpty) return;
-
                     // ignore: use_build_context_synchronously
                     showDialog(
                       context: context,

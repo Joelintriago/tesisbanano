@@ -821,7 +821,7 @@ class UsersProvider extends ChangeNotifier {
         await http.put(Uri.parse(url), headers: headers, body: body);
 
     if (response.statusCode == 200) {
-      NotificationsService.showSnackBar('Inventario Actualizado');
+      NotificationsService.showSnackBar('Insumo Actualizado');
     } else {
       NotificationsService.showSnackBarError('No se pudo Actualizado');
     }
@@ -892,7 +892,7 @@ class UsersProvider extends ChangeNotifier {
       getInventario();
       isLoading = false;
       notifyListeners();
-      NotificationsService.showSnackBar('Producto agregado al inventario');
+      NotificationsService.showSnackBar('Isumo agregado');
     } else {
       NotificationsService.showSnackBarError('No se pudo crear el insumo.');
     }
